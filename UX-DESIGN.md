@@ -1,7 +1,7 @@
 # User Experience Design
 
 ## Project Links
-- [Interactive Figma Prototype](https://www.figma.com/design/c0f4pZluj5b3mKtv9O8LBR/random_blottesque?node-id=0-1&t=LGo6gXG2Oto1cJo2-1)
+- [Interactive Figma Prototype](https://www.figma.com/proto/c0f4pZluj5b3mKtv9O8LBR/random_blottesque?node-id=0-1&t=zomKgsyhtyoNaTqn-1)
 - [App Map Diagram](https://www.figma.com/board/sePqKGcZuG0x7Fa3kC24r4/random_blottesque?node-id=0-1&t=jXXTWomOJjoyKga2-1)
 
 ---
