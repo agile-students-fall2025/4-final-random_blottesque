@@ -9,7 +9,7 @@
 ## App Map
 
 ### Navigation Flow Diagram
-![App Map](ux-design/image.png)
+![App Map](ux-design/ux-design/image.png)
 
 ---
 
