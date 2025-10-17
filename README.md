@@ -1,7 +1,7 @@
 # 🏠 Roomier
 
 ## Product Vision Statement
-RoomieHub is a mobile web application designed to make shared living smoother, fairer, and less stressful by providing a centralized platform for roommates to coordinate chores, split expenses, track shared inventory, and maintain a harmonious living environment.
+Roomier is a mobile web application designed to make shared living smoother, fairer, and less stressful by providing a centralized platform for roommates to coordinate chores, split expenses, track shared inventory, and maintain a harmonious living environment.
 
 ## Core Team Members
 
