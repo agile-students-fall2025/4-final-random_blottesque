@@ -1,0 +1,112 @@
+/* ---------- Design Tokens ---------- */
+:root{
+  --bg-start:#f3f6ff;
+  --bg-end:#fff7fb;
+  --surface:#ffffff;
+  --text:#101828;
+  --muted:#6b7280;
+  --ring:#e5e7eb;
+  --shadow:0 10px 25px rgba(16,24,40,.06);
+  --radius:16px;
+
+  /* brand accents */
+  --indigo-50:#eef2ff; --indigo-600:#4f46e5;
+  --emerald-50:#ecfdf5; --emerald-600:#059669;
+  --rose-50:#fff1f2; --rose-600:#e11d48;
+  --sky-50:#f0f9ff; --sky-600:#0284c7;
+  --amber-50:#fffbeb; --amber-600:#b45309;
+}
+
+/* ---------- App Shell ---------- */
+html,body,#root{height:100%}
+body{
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  color:var(--text);
+  background:linear-gradient(180deg,var(--bg-start),var(--bg-end));
+}
+
+.app-shell{min-height:100%; display:flex; flex-direction:column;}
+.shell-main{flex:1; padding:18px 16px; max-width:440px; margin:0 auto; width:100%}
+
+/* ---------- Top / Bottom Bars ---------- */
+.topbar{
+  position:sticky; top:0; z-index:50;
+  backdrop-filter:saturate(180%) blur(10px);
+  background:rgba(255,255,255,.65); border-bottom:1px solid var(--ring);
+}
+.topbar-inner{max-width:440px; margin:0 auto; padding:12px 16px; display:flex; gap:12px; align-items:center; justify-content:space-between}
+.brand{font-weight:800; letter-spacing:.2px}
+
+.group-select{
+  appearance:none; border:1px solid var(--ring); background:#fff;
+  padding:8px 36px 8px 12px; border-radius:12px; font-weight:600; max-width:60%;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='none' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' stroke='%236b7280'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/></svg>");
+  background-repeat:no-repeat; background-size:16px; background-position:right 10px center;
+}
+
+.bottombar{position:sticky; bottom:0; background:#fff; border-top:1px solid var(--ring)}
+.bottombar-inner{max-width:440px; margin:0 auto; display:grid; grid-template-columns:repeat(3,1fr); gap:6px; padding:8px}
+.tab{
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+  padding:8px 4px; border-radius:12px; text-decoration:none; color:#6b7280; font-size:12px; font-weight:600;
+}
+.tab.active{color:var(--text); background:rgba(16,24,40,.06)}
+
+/* ---------- Primitives ---------- */
+.card{
+  background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow);
+  padding:14px;
+}
+.section-title{font-weight:700; margin:0 0 10px}
+.badge{font-size:12px; padding:4px 8px; border-radius:999px;}
+
+/* Inputs */
+.field{display:flex; flex-direction:column; gap:6px; margin-bottom:12px}
+.label{font-size:13px; color:var(--muted); font-weight:600}
+.input, .textarea, .select{
+  width:100%; border:1px solid var(--ring); border-radius:12px; padding:10px 12px; font:inherit; background:#fff;
+}
+.textarea{min-height:92px; resize:vertical}
+
+/* Buttons → consistent height & shape */
+.btn{height:44px; padding:0 16px; border-radius:12px; font-weight:700; display:inline-flex; align-items:center; justify-content:center; gap:8px; border:1px solid transparent; cursor:pointer}
+.btn:disabled{opacity:.6; cursor:not-allowed}
+.btn-primary{background:#111827; color:#fff}
+.btn-ghost{background:#f3f4f6; color:#111827; border-color:#e5e7eb}
+.btn-full{width:100%}
+
+/* ---------- Tiles (equal height cards with icons) ---------- */
+.tile{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px; border-radius:var(--radius); border:1px solid var(--ring); background:var(--surface);
+  min-height:92px; box-shadow:var(--shadow); width:100%; text-align:left;
+  transition:transform .08s ease, box-shadow .2s ease;
+}
+.tile:active{transform:translateY(1px)}
+.tile-title{font-size:13px; color:var(--muted); font-weight:600}
+.tile-value{font-size:22px; font-weight:800}
+.tile-hint{font-size:12px; color:var(--muted)}
+.tile-icon{display:grid; place-items:center; width:44px; height:44px; border-radius:12px;}
+
+/* color variants */
+.variant-indigo .tile-icon{background:var(--indigo-50); color:var(--indigo-600)}
+.variant-emerald .tile-icon{background:var(--emerald-50); color:var(--emerald-600)}
+.variant-rose .tile-icon{background:var(--rose-50); color:var(--rose-600)}
+.variant-sky .tile-icon{background:var(--sky-50); color:var(--sky-600)}
+.variant-amber .tile-icon{background:var(--amber-50); color:var(--amber-600)}
+
+/* pill link */
+.pill{width:100%; height:44px; border-radius:999px; background:#eef2f7; display:grid; place-items:center; font-weight:700}
+
+/* simple grid */
+.grid-2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+
+/* lists */
+.list{list-style:none; margin:0; padding:0}
+.list-item{display:flex; align-items:center; justify-content:space-between; gap:12px}
+.item-main{display:flex; align-items:center; gap:10px}
+.item-title{font-weight:700}
+.item-sub{font-size:12px; color:var(--muted)}
+.status-done{background:var(--emerald-50); color:var(--emerald-600)}
+.status-pending{background:var(--amber-50); color:var(--amber-600)}
