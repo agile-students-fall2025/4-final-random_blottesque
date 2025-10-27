@@ -79,12 +79,9 @@ RoomieHub includes:
 
 **Prereqs:** Node 18+ and npm.
 
-
-# from repo root
 - cd front-end
 - npm install
 
-# run locally
 - npm start
 - The app runs at http://localhost:3000.
 
