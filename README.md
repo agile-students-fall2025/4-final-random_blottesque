@@ -67,16 +67,24 @@ RoomieHub includes:
 
 ## Project History
 
-tbd
+- Prototyping using Figma
+- Sprint 0 UX-Design updates
+- Sprint 1 planning
+- Front-end updates
 
 
 ## Getting Started
 
-tbd
+### 🚀 Quick Start (Sprint 1 — Front-End)
 
-### Running the Application
+**Prereqs:** Node 18+ and npm.
 
-tbd
+- cd front-end
+- npm install
+
+- npm start
+- The app runs at http://localhost:3000.
+
 
 ## Contributing
 
@@ -88,4 +96,4 @@ Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for details on:
 
 ## Project Status
 
-Currently on Sprint 0
+Currently on Sprint 1
