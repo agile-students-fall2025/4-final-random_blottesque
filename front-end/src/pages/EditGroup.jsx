@@ -14,7 +14,12 @@ export default function EditGroup() {
   useEffect(() => {
     let mounted = true;
     import('../lib/mockApi').then(api =>
-      api.getGroup(groupId).then(g => { if (mounted) { setGroup(g); setLoading(false); }})
+      api.getGroup(groupId).then(g => {
+        if (mounted) {
+          setGroup(g);
+          setLoading(false);
+        }
+      })
     );
     return () => { mounted = false; };
   }, [groupId]);
@@ -28,18 +33,35 @@ export default function EditGroup() {
   }
 
   return (
-    <div style={{display:'grid', gap:12}}>
-      <h1 style={{margin:0, fontSize:20, fontWeight:800}}>Edit Group</h1>
+    <div className="content-narrow">
+      <h1 style={{ margin: 0, fontSize: 20, fontWeight: 800 }}>Edit Group</h1>
 
-      <div style={{display:'grid', gap:12}}>
-        <QuickTile icon={<ImageIcon size={18}/>} title="Edit Group Pic" subtitle="Placeholder – add photos next sprint" onClick={()=>alert('Add photo later')}/>
-        <QuickTile icon={<Users size={18}/>} title="Edit Members List" subtitle="Open roommates editor" onClick={()=>alert('Members editor next sprint')}/>
-        <QuickTile icon={<FileText size={18}/>} title="Edit Description" subtitle="Use the form below" onClick={()=>document.getElementById('desc-input')?.focus()}/>
+      {/* Quick actions */}
+      <div style={{ display: 'grid', gap: 12 }}>
+        <QuickTile
+          icon={<ImageIcon size={18} />}
+          title="Edit Group Pic"
+          subtitle="Placeholder – add photos next sprint"
+          onClick={() => alert('Add photo later')}
+        />
+        <QuickTile
+          icon={<Users size={18} />}
+          title="Edit Members List"
+          subtitle="Open roommates editor"
+          onClick={() => alert('Members editor next sprint')}
+        />
+        <QuickTile
+          icon={<FileText size={18} />}
+          title="Edit Description"
+          subtitle="Use the form below"
+          onClick={() => document.getElementById('desc-input')?.focus()}
+        />
       </div>
 
+      {/* Main form */}
       <GroupForm initial={group} onSubmit={handleSubmit} submitLabel="Save Changes" />
 
-      <button className="btn btn-ghost btn-full" onClick={()=>nav('/dashboard')}>HOME</button>
+      <button className="btn btn-ghost btn-full" onClick={() => nav('/dashboard')}>HOME</button>
     </div>
   );
 }
@@ -51,7 +73,7 @@ function QuickTile({ icon, title, subtitle, onClick }) {
         <div className="tile-title">{title}</div>
         <div className="tile-hint">{subtitle}</div>
       </div>
-      <div className="tile-icon" style={{background:'var(--sky-50)', color:'var(--sky-600)'}}>
+      <div className="tile-icon" style={{ background: 'var(--sky-50)', color: 'var(--sky-600)' }}>
         {icon}
       </div>
     </button>
