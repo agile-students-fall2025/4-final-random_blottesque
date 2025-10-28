@@ -6,11 +6,17 @@ import EditGroup from './pages/EditGroup';
 import ChoresDashboard from './pages/ChoresDashboard';
 import AddChore from './pages/AddChore';
 import EditChore from './pages/EditChore';
+import Login from './pages/Login';
+import Signout from './pages/Signout';
 
 export default function App() {
   return (
     <Layout>
       <Routes>
+
+        {/*Authentication Routes*/}
+        <Route path="/login" element={<Login />} />
+        <Route path="/signout" element={<Signout />} />
 
         {/*Group Home Routes*/}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
@@ -25,5 +31,7 @@ export default function App() {
 
       </Routes>
     </Layout>
+
+    
   );
 }
