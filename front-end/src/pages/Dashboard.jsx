@@ -37,7 +37,10 @@ export default function Dashboard() {
           </div>
         </div>
         <button className="btn btn-primary" onClick={()=>nav(`/groups/${activeGroupId}/edit`)}>EDIT</button>
+        <button className="btn btn-secondary" onClick={() => nav('/signout')}>Sign Out</button>
       </div>
+
+
 
       {/* Roommate info pill */}
       <button className="pill" onClick={()=>nav(`/groups/${activeGroupId}/edit?tab=members`)}>Roommate Information</button>
