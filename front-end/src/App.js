@@ -6,6 +6,9 @@ import EditGroup from './pages/EditGroup';
 import ChoresDashboard from './pages/ChoresDashboard';
 import AddChore from './pages/AddChore';
 import EditChore from './pages/EditChore';
+import ExpensesDashboard from './pages/ExpensesDashboard';
+import AddExpense from './pages/AddExpense';
+import EditExpense from './pages/EditExpense';
 
 export default function App() {
   return (
@@ -23,6 +26,10 @@ export default function App() {
         <Route path="/add-chore" element={<AddChore />} />
         <Route path="/chores/:choreId/edit" element={<EditChore />} />
 
+         {/* Expenses Routes */}
+        <Route path="/expenses" element={<ExpensesDashboard />} />
+        <Route path="/expenses/new" element={<AddExpense />} />
+        <Route path="/expenses/:expenseId/edit" element={<EditExpense />} />
       </Routes>
     </Layout>
   );
