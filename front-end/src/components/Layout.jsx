@@ -1,6 +1,6 @@
 import { Link, NavLink } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { Home, PlusCircle, Settings } from 'lucide-react';
+import { Home, PlusCircle, Settings, Boxes } from 'lucide-react';
 
 export default function Layout({ children }) {
   const { groups, activeGroupId, setActiveGroupId } = useApp();
@@ -28,6 +28,7 @@ export default function Layout({ children }) {
           <Tab to="/dashboard" icon={<Home size={18}/>} label="Dashboard" />
           <Tab to="/groups/new" icon={<PlusCircle size={18}/>} label="New Group" />
           <Tab to={`/groups/${activeGroupId || ''}/edit`} icon={<Settings size={18}/>} label="Edit Group" />
+          <Tab to={`/groups/${activeGroupId || ''}/inventory`} icon={<Boxes size={18}/>} label="Inventory" />
         </div>
       </nav>
     </div>
