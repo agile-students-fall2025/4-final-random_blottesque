@@ -47,7 +47,7 @@ export default function Dashboard() {
         <StatCard title="Preferences" value="" icon={SlidersHorizontal} variant="emerald"
                   onClick={()=>nav(`/groups/${activeGroupId}/edit?tab=prefs`)} />
         <StatCard title="Chores" value={`${choresDue} due`} icon={ListChecks} variant="indigo"
-                  onClick={()=>alert('Chore dashboard next sprint')} />
+                  onClick={()=>nav(`/chores`)} />
         <StatCard title="Expenses" value={`-$${youOwe.toFixed(0)}/+$${youreOwed.toFixed(0)}`} hint="You owe / You're owed"
                   icon={Wallet2} variant="rose" onClick={()=>alert('Expense dashboard next sprint')} />
         <StatCard title="Inventory" value={`${data.inventory.length} items`} icon={Boxes} variant="sky"
