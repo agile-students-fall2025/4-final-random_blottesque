@@ -28,7 +28,6 @@ export default function Layout({ children }) {
           <Tab to="/dashboard" icon={<Home size={18}/>} label="Dashboard" />
           <Tab to="/groups/new" icon={<PlusCircle size={18}/>} label="New Group" />
           <Tab to={`/groups/${activeGroupId || ''}/edit`} icon={<Settings size={18}/>} label="Edit Group" />
-          <Tab to={`/groups/${activeGroupId || ''}/inventory`} icon={<Boxes size={18}/>} label="Inventory" />
         </div>
       </nav>
     </div>
