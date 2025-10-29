@@ -32,7 +32,7 @@ export default function App() {
 
         {/*Chores Routes*/}
         <Route path="/chores" element={<ChoresDashboard />} />
-        <Route path="/add-chore" element={<AddChore />} />
+        <Route path="/chores/add" element={<AddChore />} />
         <Route path="/chores/:choreId/edit" element={<EditChore />} />
 
          {/* Expenses Routes */}

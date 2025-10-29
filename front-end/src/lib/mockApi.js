@@ -70,6 +70,8 @@ export async function getDashboard(groupId) {
         title: faker.helpers.arrayElement(['Dishes', 'Trash', 'Vacuum', 'Bathroom', 'Dusting', 'Laundry']),
         assignee: faker.person.firstName(),
         due: faker.date.soon({ days: 5 }).toISOString(),
+        repeat: faker.helpers.arrayElement(['none', 'Daily', 'Weekly', 'Monthly']),
+        description: faker.lorem.paragraph(),
         done: Math.random() < 0.3
       })),
       expenses: Array.from({ length: 3 }).map(() => ({
