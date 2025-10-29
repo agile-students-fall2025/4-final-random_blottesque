@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { ListChecks, Pencil, PlusSquare, Trash2 } from 'lucide-react';
+import { CheckSquare, Square, ListChecks, Pencil, PlusSquare, Trash2 } from 'lucide-react';
 
 export default function ChoresDashboard() {
     const nav = useNavigate();
@@ -22,6 +22,13 @@ export default function ChoresDashboard() {
     const currentUser = chores[0];
     const yourChores = chores.filter(c => c.assignee === currentUser.assignee);
     const roommateChores = chores.filter(c => c.assignee !== currentUser.assignee);
+    const toggleDone = (id) => {
+        setData(prevData => ({
+            ...prevData,
+            chores: prevData.chores.map(c => c.id === id ? { ...c, done: !c.done } : c
+            ),
+        }));
+    };
 
     return (
         <div style={{ display: 'grid', gap: 12 }}>
@@ -52,12 +59,23 @@ export default function ChoresDashboard() {
                 {yourChores.length === 0 ? <div className='item-sub'>Nothing yet!</div> :
                     <ul className='list'>
                         {yourChores.map(c => (
-                            <li key={c.id} className='list-item' style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <div style={{ display: 'flex', gap: 12, alignItems:'center' }}>
-                                    <input type='checkbox' checked={c.done} onChange={() => alert('Done toggled')}></input>
+                            <li key={c.id} className='list-item' style={{ padding: '8px 0' }}>
+                                <div className="item-main" style={{ dislay: 'flex', alignItems: 'center', gap: 8 }}>
+                                    {c.done ? (
+                                        <CheckSquare size={18} color='#059669' onClick={() => toggleDone(c.id)}
+                                            style={{ cursor: 'pointer' }}
+                                        />
+                                    ) : (
+                                            <Square
+                                                size={18}
+                                                color="#9ca3af"
+                                                onClick={() => toggleDone(c.id)}
+                                                style={{ cursor: 'pointer' }}
+                                        />
+                                    )}
                                     <div>
-                                        <div style={{ fontWeight: 700 }}>{c.title}</div>
-                                        <div className='item-sub'>{c.due}</div>
+                                        <div className='item-title'>{c.title}</div>
+                                        <div className='item-sub'>due {new Date(c.due).toLocaleDateString()}</div>
                                     </div>
                                 </div>
                                 {editMode && (
@@ -73,7 +91,6 @@ export default function ChoresDashboard() {
                             </li>
                         ))}
                     </ul>
-
                 }
             </section>
             
@@ -83,12 +100,26 @@ export default function ChoresDashboard() {
                 {roommateChores.length === 0 ? <div className='item-sub'>Nothing yet!</div> :
                     <ul className='list'>
                         {roommateChores.map(c => (
-                            <li key={c.id} className='list-item' style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <div style={{ display: 'flex', gap: 12, alignItems:'center' }}>
-                                    <input type='checkbox' checked={c.done} onChange={() => alert('Done toggled')}></input>
+                            <li key={c.id} className='list-item' style={{ padding: '8px 0' }}>
+                                <div className="item-main" style={{dislay:'flex', alignItems:'center', gap:8}}>
+                                    {c.done ? (
+                                        <CheckSquare
+                                            size={18}
+                                            color="#059669"
+                                            onClick={() => toggleDone(c.id)}
+                                            style={{ cursor: 'pointer' }}
+                                        />
+                                    ) : (
+                                            <Square
+                                                size={18}
+                                                color="#9ca3af"
+                                                onClick={() => toggleDone(c.id)}
+                                                style={{ cursor: 'pointer' }}
+                                        />
+                                    )}
                                     <div>
-                                        <div style={{ fontWeight: 700 }}>{c.title}</div>
-                                        <div className='item-sub'>{c.assignee} - {c.due}</div>
+                                        <div className='item-title'>{c.title}</div>
+                                        <div className='item-sub'>{c.assignee} • due {new Date(c.due).toLocaleDateString()}</div>
                                     </div>
                                 </div>
                                 {editMode && (
