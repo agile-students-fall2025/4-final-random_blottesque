@@ -38,6 +38,23 @@ export default function Dashboard() {
 
   return (
     <div style={{ display: 'grid', gap: 12 }}>
+
+      {/* User Profile card */}
+      <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div className="tile-icon" style={{ background: 'var(--indigo-50)', color: 'var(--indigo-600)' }}>
+            <UserRound size={18} />
+          </div>
+          <div>
+            <h1 style={{ margin: 0, fontSize: 18, fontWeight: 800 }}>Welcome<br/>_Username_</h1>
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button className="btn btn-primary" onClick={() => nav('/user-profile')}>Profile</button>
+          <button className="btn btn-secondary" onClick={() => nav('/signout')}>Sign Out</button>
+        </div>
+      </div>
+
       {/* Header card */}
       <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -51,7 +68,6 @@ export default function Dashboard() {
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
           <button className="btn btn-primary" onClick={() => nav(`/groups/${activeGroupId}/edit`)}>EDIT</button>
-          <button className="btn btn-secondary" onClick={() => nav('/signout')}>Sign Out</button>
         </div>
       </div>
 
