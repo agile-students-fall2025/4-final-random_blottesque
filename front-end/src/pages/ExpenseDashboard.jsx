@@ -38,7 +38,6 @@ export default function ExpensesDashboard() {
         </button>
       </div>
 
-      {/* Expense list */}
       <div className="card" style={{ padding: "10px 12px" }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 120px 140px", gap: 8, fontWeight: 700 }}>
           <span>Description</span>
@@ -59,26 +58,20 @@ export default function ExpensesDashboard() {
               borderTop: "1px solid #eee",
             }}
           >
-            <span>{e.description}</span>
+            <span>{e.description || e.label}</span>
             <span>${Number(e.amount).toFixed(2)}</span>
             <span>{e.paidBy?.name || e.paidBy?.email || "—"}</span>
           </div>
         ))}
       </div>
 
-      {/* Status */}
       <div className="card">
-        <h3 className="section-title" style={{ marginTop: 0 }}>
-          Your Status
-        </h3>
+        <h3 className="section-title" style={{ marginTop: 0 }}>Your Status</h3>
         <p>You’re owed: <strong>${youreOwed.toFixed(2)}</strong></p>
         <p>You owe: <strong>${youOwe.toFixed(2)}</strong></p>
       </div>
 
-      <button className="btn btn-ghost btn-full" onClick={() => nav("/dashboard")}>
-        HOME
-      </button>
+      <button className="btn btn-ghost btn-full" onClick={() => nav("/dashboard")}>HOME</button>
     </div>
   );
 }
-
