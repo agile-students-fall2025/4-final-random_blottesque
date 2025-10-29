@@ -13,6 +13,7 @@ import ExpensesDashboard from './pages/ExpensesDashboard';
 import AddExpense from './pages/AddExpense';
 import EditExpense from './pages/EditExpense';
 import GroupInventory from './pages/GroupInventory';
+import UserProfile from './pages/UserProfile';
 
 export default function App() {
   return (
@@ -41,6 +42,9 @@ export default function App() {
 
         {/*Inventory Routes*/}
         <Route path="/groups/:groupId/inventory" element={<GroupInventory />} />
+
+        {/*Profile Routes*/}
+        <Route path="/user-profile" element={<UserProfile />} />
 
       </Routes>
     </Layout>
