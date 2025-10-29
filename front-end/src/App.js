@@ -6,11 +6,13 @@ import EditGroup from './pages/EditGroup';
 import ChoresDashboard from './pages/ChoresDashboard';
 import AddChore from './pages/AddChore';
 import EditChore from './pages/EditChore';
+
 import Login from './pages/Login';
 import Signout from './pages/Signout';
 import ExpensesDashboard from './pages/ExpensesDashboard';
 import AddExpense from './pages/AddExpense';
 import EditExpense from './pages/EditExpense';
+import GroupInventory from './pages/GroupInventory';
 
 export default function App() {
   return (
@@ -36,6 +38,10 @@ export default function App() {
         <Route path="/expenses" element={<ExpensesDashboard />} />
         <Route path="/expenses/new" element={<AddExpense />} />
         <Route path="/expenses/:expenseId/edit" element={<EditExpense />} />
+
+        {/*Inventory Routes*/}
+        <Route path="/groups/:groupId/inventory" element={<GroupInventory />} />
+
       </Routes>
     </Layout>
 
