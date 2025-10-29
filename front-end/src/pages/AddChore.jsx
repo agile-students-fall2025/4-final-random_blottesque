@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { CheckSquare, Square, ListChecks, Pencil, PlusSquare, Trash2 } from 'lucide-react';
 
 export default function AddChore() {
     const nav = useNavigate();
@@ -10,7 +11,9 @@ export default function AddChore() {
 
     return (
         <div className="card" style={{ maxWidth: 420, margin: "0 auto" }}>
-            <h1 className="section-title" style={{ marginTop: 0 }}>Add a Chore</h1>
+            <h1 className="section-title" style={{ marginTop: 0 }}><PlusSquare size={20}></PlusSquare>  Add a Chore
+                
+            </h1>
             <form onSubmit={handleSubmit} style={{ display: "grid", gap: 12 }}>
                 <label>
                     <div className="item-sub">Title</div>
@@ -19,7 +22,7 @@ export default function AddChore() {
 
                 <label>
                     <div className="item-sub">Assignee</div>
-                    <input className="input" placeholder="Assignee" />
+                    <select className="input" placeholder="Assignee"></select>
                 </label>
 
                 <label>
@@ -29,12 +32,12 @@ export default function AddChore() {
 
                 <label>
                     <div className="item-sub">Repeat</div>
-                    <input className="input" placeholder="Repeat" />
+                    <select className="input" placeholder="Repeat" />
                 </label>
 
                 <label>
                     <div className="item-sub">Description</div>
-                    <input className="input" placeholder="Description" />
+                    <textarea className="input" placeholder="Description" />
                 </label>
                 
                 <div style={{ display: "flex", gap: 8 }}>
