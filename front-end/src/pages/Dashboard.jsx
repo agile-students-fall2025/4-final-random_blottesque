@@ -7,13 +7,21 @@ import ExpenseList from '../components/ExpenseList';
 import InventoryList from '../components/InventoryList';
 import { UserRound, SlidersHorizontal, ListChecks, Wallet2, Boxes } from 'lucide-react';
 
+function fmtTime(t) {
+  if (!t || typeof t !== 'string') return null;
+  const [H, M = '00'] = t.split(':');
+  const h = Number(H);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const hour12 = (h % 12) || 12;
+  return `${hour12}:${M.padStart(2, '0')} ${ampm}`;
+}
+
 export default function Dashboard() {
   const nav = useNavigate();
   const { loading, getActiveGroup, activeGroupId, getDashboard } = useApp();
   const group = getActiveGroup();
   const [data, setData] = useState(null);
 
-  // target section for the Inventory tile
   const inventoryRef = useRef(null);
 
   useEffect(() => {
@@ -27,6 +35,13 @@ export default function Dashboard() {
   const choresDue = data.chores.filter(c => !c.done).length;
   const youOwe = data.expenses.filter(e => e.youOwe).reduce((s, e) => s + e.amount, 0);
   const youreOwed = data.expenses.filter(e => !e.youOwe).reduce((s, e) => s + e.amount, 0);
+
+  // NEW: compute tile text for quiet hours (from the group object saved via GroupForm)
+  const quietStart = group?.quietStart ?? data?.prefs?.quietStart;
+  const quietEnd   = group?.quietEnd   ?? data?.prefs?.quietEnd;
+  const quietText  = (fmtTime(quietStart) && fmtTime(quietEnd))
+    ? `${fmtTime(quietStart)}–${fmtTime(quietEnd)}`
+    : 'Set quiet hours';
 
   const focusInventory = () => {
     if (inventoryRef.current) {
@@ -62,7 +77,7 @@ export default function Dashboard() {
       <div className="grid-2">
         <StatCard
           title="Preferences"
-          value=""
+          value={quietText}            // <-- FIX: show quiet hours instead of empty string
           icon={SlidersHorizontal}
           variant="emerald"
           onClick={() => nav(`/groups/${activeGroupId}/edit?tab=prefs`)}
@@ -87,7 +102,7 @@ export default function Dashboard() {
           value={`${data.inventory.length} items`}
           icon={Boxes}
           variant="sky"
-          onClick={() => nav('/groups/${activeGroupId}/inventory')}
+          onClick={() => nav(`/groups/${activeGroupId}/inventory`)} // <-- FIX: backticks/template literal
         />
       </div>
 
