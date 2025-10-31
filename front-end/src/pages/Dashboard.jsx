@@ -103,7 +103,7 @@ export default function Dashboard() {
           value={`${data.inventory.length} items`}
           icon={Boxes}
           variant="sky"
-          onClick={() => nav('/groups/${activeGroupId}/inventory')}
+          onClick={() => nav('/${activeGroupId}/inventory')}
         />
       </div>
 
