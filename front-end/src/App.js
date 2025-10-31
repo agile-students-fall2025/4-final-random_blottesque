@@ -9,7 +9,7 @@ import EditChore from './pages/EditChore';
 
 import Login from './pages/Login';
 import Signout from './pages/Signout';
-import ExpensesDashboard from './pages/ExpenseDashboard';
+import ExpensesDashboard from './pages/ExpensesDashboard';
 import AddExpense from './pages/AddExpense';
 import EditExpense from './pages/EditExpense';
 import GroupInventory from './pages/GroupInventory';
