@@ -158,3 +158,24 @@ textarea.input {
 }
 
 textarea.input { min-height: 120px; } 
+
+/* Roommate chips */
+.rm-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 18px;                 
+  background: #fff;
+  border: 2px solid var(--ring);      
+  border-radius: 9999px;              
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  box-shadow: 0 1px 0 rgba(16, 24, 40, 0.02);
+}
+
+.rm-chip-lg {                          
+  font-size: 16px;
+  padding: 16px 22px;
+}
+

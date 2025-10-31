@@ -1,115 +1,210 @@
-import { useEffect, useState } from 'react';
-import QuietHours from './QuietHours';
-import { Users, ListChecks, Wallet2, Boxes, SlidersHorizontal } from 'lucide-react';
+import { useState } from 'react';
+import { SlidersHorizontal, Users, AppWindow } from 'lucide-react';
 
-export default function GroupForm({ initial = null, onSubmit, submitLabel = 'Create Group' }) {
-  const [form, setForm] = useState({
-    name: '',
-    description: '',
-    inviteCode: '',
-    roommatesCSV: '',
-    componentsEnabled: { chores: true, expenses: true, inventory: true, envPrefs: true },
-    quietHours: { start: '22:00', end: '07:00' },
-    preferences: { temperatureC: 22, guestsAllowed: true }
-  });
+const c2f = (c) => Math.round((c * 9) / 5 + 32);
 
-  useEffect(() => {
-    if (initial) {
-      setForm({
-        name: initial.name ?? '',
-        description: initial.description ?? '',
-        inviteCode: initial.inviteCode ?? '',
-        roommatesCSV: (initial.roommates ?? []).join(', '),
-        componentsEnabled: initial.componentsEnabled ?? { chores: true, expenses: true, inventory: true, envPrefs: true },
-        quietHours: initial.quietHours ?? { start: '22:00', end: '07:00' },
-        preferences: initial.preferences ?? { temperatureC: 22, guestsAllowed: true }
-      });
-    }
-  }, [initial]);
+export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save' }) {
+  const toChip = (r) => (typeof r === 'string' ? r : (r?.email || r?.name || ''));
+  const fromText = (t) => t.split(',').map(s => s.trim()).filter(Boolean);
 
-  const update = (k, v) => setForm((f) => ({ ...f, [k]: v }));
-  const toggle = (k) => update('componentsEnabled', { ...form.componentsEnabled, [k]: !form.componentsEnabled[k] });
+  // Basics
+  const [name, setName] = useState(initial.name || '');
+  const [description, setDescription] = useState(initial.description || '');
+  const [inviteCode, setInviteCode] = useState(initial.inviteCode || '');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const roommates = form.roommatesCSV.split(',').map(s => s.trim()).filter(Boolean);
-    onSubmit?.({ ...form, roommates });
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <section className="card">
-        <div className="field">
-          <label className="label">Group name</label>
-          <input className="input" value={form.name} onChange={(e)=>update('name', e.target.value)} required />
-        </div>
-        <div className="field">
-          <label className="label">Description</label>
-          <textarea id="desc-input" className="textarea" value={form.description} onChange={(e)=>update('description', e.target.value)} />
-        </div>
-        <div className="field">
-          <label className="label">Invite code (optional)</label>
-          <input className="input" value={form.inviteCode} onChange={(e)=>update('inviteCode', e.target.value.toUpperCase())} />
-        </div>
-      </section>
-
-      <section className="card" style={{marginTop:12}}>
-        <h3 className="section-title" style={{display:'flex',alignItems:'center',gap:8}}>
-          <Users size={18}/> Roommates
-        </h3>
-        <div className="field" style={{marginBottom:0}}>
-          <label className="label">Comma-separated emails or names</label>
-          <textarea className="textarea" placeholder="alice@x.com, bob@x.com"
-                    value={form.roommatesCSV} onChange={(e)=>update('roommatesCSV', e.target.value)} />
-        </div>
-      </section>
-
-      <section className="card" style={{marginTop:12}}>
-        <h3 className="section-title">Components</h3>
-        <div className="grid-2">
-          <Toggle label="Chores" icon={ListChecks} checked={form.componentsEnabled.chores} onChange={()=>toggle('chores')} variant="indigo"/>
-          <Toggle label="Expenses" icon={Wallet2} checked={form.componentsEnabled.expenses} onChange={()=>toggle('expenses')} variant="rose"/>
-          <Toggle label="Inventory" icon={Boxes} checked={form.componentsEnabled.inventory} onChange={()=>toggle('inventory')} variant="sky"/>
-          <Toggle label="Env. Prefs" icon={SlidersHorizontal} checked={form.componentsEnabled.envPrefs} onChange={()=>toggle('envPrefs')} variant="emerald"/>
-        </div>
-      </section>
-
-      <section className="card" style={{marginTop:12}}>
-        <QuietHours value={form.quietHours} onChange={(qh)=>update('quietHours', qh)} />
-      </section>
-
-      <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, marginTop:12}}>
-        <button type="submit" className="btn btn-primary"> {submitLabel} </button>
-        <button type="reset" className="btn btn-ghost"
-          onClick={()=>setForm(initial || {
-            name:'', description:'', inviteCode:'', roommatesCSV:'',
-            componentsEnabled:{chores:true,expenses:true,inventory:true,envPrefs:true},
-            quietHours:{start:'22:00', end:'07:00'}, preferences:{temperatureC:22, guestsAllowed:true}
-          })}>
-          Reset
-        </button>
-      </div>
-    </form>
+  // Roommates text
+  const [roommatesText, setRoommatesText] = useState(
+    Array.isArray(initial.roommates) ? initial.roommates.map(toChip).join(', ') : ''
   );
-}
 
-function Toggle({ label, icon: Icon, checked, onChange, variant='indigo' }) {
-  const colors = {
-    indigo:{bg:'var(--indigo-50)', fg:'var(--indigo-600)'},
-    rose:{bg:'var(--rose-50)', fg:'var(--rose-600)'},
-    sky:{bg:'var(--sky-50)', fg:'var(--sky-600)'},
-    emerald:{bg:'var(--emerald-50)', fg:'var(--emerald-600)'}
-  }[variant];
+  // Components toggles
+  const has = (k) => Array.isArray(initial.components) && initial.components.includes(k);
+  const [components, setComponents] = useState({
+    chores: has('chores') ?? true,
+    expenses: has('expenses') ?? true,
+    inventory: has('inventory') ?? true,
+  });
+  const toggleComponent = (key) =>
+    setComponents((prev) => ({ ...prev, [key]: !prev[key] }));
+
+  // Quiet hours
+  const [quietStart, setQuietStart] = useState(initial?.quietHours?.start || '');
+  const [quietEnd, setQuietEnd] = useState(initial?.quietHours?.end || '');
+
+  // Preferences (Fahrenheit-first; fallback from legacy °C)
+  const initialTempF =
+    typeof initial?.preferences?.temperatureF === 'number'
+      ? String(initial.preferences.temperatureF)
+      : typeof initial?.preferences?.temperatureC === 'number'
+        ? String(c2f(initial.preferences.temperatureC))
+        : '';
+  const [temperatureF, setTemperatureF] = useState(initialTempF);
+
+  const [guestsAllowed, setGuestsAllowed] = useState(
+    typeof initial?.preferences?.guestsAllowed === 'boolean'
+      ? initial.preferences.guestsAllowed
+      : true
+  );
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const payload = {
+      name: name.trim(),
+      description: description.trim(),
+      inviteCode: inviteCode.trim(),
+      roommates: fromText(roommatesText),
+      components: Object.entries(components).filter(([, v]) => v).map(([k]) => k),
+      quietHours: { start: quietStart || null, end: quietEnd || null },
+      preferences: {
+        temperatureF: temperatureF === '' ? null : Number(temperatureF),
+        guestsAllowed,
+      },
+    };
+    await onSubmit?.(payload);
+  }
 
   return (
-    <button type="button" onClick={onChange} className="tile" style={{minHeight:70, borderStyle:checked?'solid':'dashed'}}>
-      <div>
-        <div className="tile-title">{label}</div>
-        <div className="tile-hint" style={{opacity:.9}}>{checked ? 'Enabled' : 'Disabled'}</div>
-      </div>
-      <div className="tile-icon" style={{background:colors.bg, color:colors.fg}}>
-        <Icon size={18}/>
-      </div>
-    </button>
+    <form onSubmit={handleSubmit} className="form-stack" style={{ display: 'grid', gap: 12 }}>
+      {/* NEW: wrap basics in a card so they align with everything else */}
+      <section className="card" style={{ display: 'grid', gap: 12 }}>
+        <h3 className="section-title" style={{ marginTop: 0 }}>Group</h3>
+
+        <label className="field">
+          <div className="field-label">Group name</div>
+          <input
+            className="input"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            placeholder="Address House"
+          />
+        </label>
+
+        <label className="field">
+          <div className="field-label">Description</div>
+          <textarea
+            id="desc-input"
+            className="input"
+            rows={4}
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+            placeholder="Short description (optional)"
+          />
+        </label>
+
+        <label className="field">
+          <div className="field-label">Invite code (optional)</div>
+          <input
+            className="input"
+            value={inviteCode}
+            onChange={e => setInviteCode(e.target.value)}
+            placeholder="e.g., T38YZ2"
+          />
+        </label>
+      </section>
+
+      {/* Roommates */}
+      <section className="card" style={{ display: 'grid', gap: 8 }}>
+        <h3 className="section-title" style={{ marginTop: 0, display:'flex', alignItems:'center', gap:8 }}>
+          <Users size={16} /> Roommates
+        </h3>
+        <div className="item-sub">Comma-separated emails or names</div>
+        <textarea
+          className="input"
+          rows={3}
+          value={roommatesText}
+          onChange={e => setRoommatesText(e.target.value)}
+          placeholder="alice@x.com, bob@x.com"
+        />
+      </section>
+
+      {/* Components */}
+      <section className="card" style={{ display: 'grid', gap: 8 }}>
+        <h3 className="section-title" style={{ marginTop: 0, display:'flex', alignItems:'center', gap:8 }}>
+          <AppWindow size={16} /> Components
+        </h3>
+        <div style={{ display: 'grid', gap: 8 }}>
+          {[
+            ['Chores', 'chores'],
+            ['Expenses', 'expenses'],
+            ['Inventory', 'inventory'],
+          ].map(([label, key]) => (
+            <label key={key} className="check">
+              <input type="checkbox" checked={components[key]} onChange={() => toggleComponent(key)} />
+              <span>{label}</span>
+            </label>
+          ))}
+        </div>
+      </section>
+
+      {/* Preferences */}
+      <section className="card" style={{ display: 'grid', gap: 12 }}>
+        <h3 className="section-title" style={{ marginTop: 0, display:'flex', alignItems:'center', gap:8 }}>
+          <SlidersHorizontal size={16} /> Preferences
+        </h3>
+
+        {/* Quiet hours */}
+        <div style={{ display: 'grid', gap: 8 }}>
+          <div className="item-sub">Quiet Hours</div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+            <input
+              type="time"
+              className="input"
+              value={quietStart}
+              onChange={e => setQuietStart(e.target.value)}
+              aria-label="Quiet hours start"
+            />
+            <input
+              type="time"
+              className="input"
+              value={quietEnd}
+              onChange={e => setQuietEnd(e.target.value)}
+              aria-label="Quiet hours end"
+            />
+          </div>
+        </div>
+
+        {/* Fahrenheit */}
+        <div style={{ display: 'grid', gap: 8 }}>
+          <div className="item-sub">Temperature (°F)</div>
+          <input
+            type="number"
+            className="input"
+            min={50}
+            max={85}
+            step={1}
+            value={temperatureF}
+            onChange={e => setTemperatureF(e.target.value)}
+            placeholder="e.g., 72"
+          />
+        </div>
+
+        {/* Guests */}
+        <div style={{ display: 'grid', gap: 8 }}>
+          <div className="item-sub">Guests</div>
+          <div style={{ display:'flex', gap:8 }}>
+            <label className="check">
+              <input
+                type="radio"
+                name="guests"
+                checked={guestsAllowed === true}
+                onChange={() => setGuestsAllowed(true)}
+              />
+              <span>Allowed</span>
+            </label>
+            <label className="check">
+              <input
+                type="radio"
+                name="guests"
+                checked={guestsAllowed === false}
+                onChange={() => setGuestsAllowed(false)}
+              />
+              <span>Not allowed</span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <button className="btn btn-primary btn-full">{submitLabel}</button>
+    </form>
   );
 }
