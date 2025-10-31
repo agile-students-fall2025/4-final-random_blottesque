@@ -5,7 +5,7 @@ import StatCard from '../components/StatCard';
 import ChoreList from '../components/ChoreList';
 import ExpenseList from '../components/ExpenseList';
 import InventoryList from '../components/InventoryList';
-import { UserRound, SlidersHorizontal, ListChecks, Wallet2, Boxes } from 'lucide-react';
+import { UserRound, Users, SlidersHorizontal, ListChecks, Wallet2, Boxes } from 'lucide-react';
 
 function fmtTime(t) {
   if (!t || typeof t !== 'string') return null;
@@ -15,6 +15,8 @@ function fmtTime(t) {
   const hour12 = (h % 12) || 12;
   return `${hour12}:${M.padStart(2, '0')} ${ampm}`;
 }
+
+const c2f = (c) => Math.round((c * 9) / 5 + 32);
 
 export default function Dashboard() {
   const nav = useNavigate();
@@ -36,6 +38,7 @@ export default function Dashboard() {
   const youOwe = data.expenses.filter(e => e.youOwe).reduce((s, e) => s + e.amount, 0);
   const youreOwed = data.expenses.filter(e => !e.youOwe).reduce((s, e) => s + e.amount, 0);
 
+  // --- Preferences summary values ---
   const quietStart =
     group?.quietHours?.start ?? group?.quietStart ?? data?.prefs?.quietStart;
   const quietEnd =
@@ -45,9 +48,15 @@ export default function Dashboard() {
       ? `${fmtTime(quietStart)}–${fmtTime(quietEnd)}`
       : 'Set quiet hours';
 
-  const tempC = group?.preferences?.temperatureC ?? data?.prefs?.temperatureC;
+  const rawF =
+    group?.preferences?.temperatureF ?? data?.prefs?.temperatureF;
+  const rawC =
+    group?.preferences?.temperatureC ?? data?.prefs?.temperatureC;
+  const tempF = typeof rawF === 'number' ? rawF : (typeof rawC === 'number' ? c2f(rawC) : null);
+
   const guests = group?.preferences?.guestsAllowed ?? data?.prefs?.guestsAllowed;
 
+  // --- Roommates summary ---
   const roommates = Array.isArray(group?.roommates) ? group.roommates : [];
   const rmLabel = (r) => (typeof r === 'string' ? r : (r?.name || r?.email || '—'));
 
@@ -69,14 +78,15 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Preferences + Roommates summaries */}
+      {/* Preferences + Roommates summary cards */}
       <div className="grid-2">
+        {/* Preferences summary card (keep) */}
         <section className="card" style={{ display: 'grid', gap: 8 }}>
           <h3 className="section-title" style={{ marginTop: 0 }}>Preferences</h3>
           <div className="item-sub">Quiet Hours</div>
           <div style={{ fontWeight: 800 }}>{quietText}</div>
           <div className="item-sub">Temperature</div>
-          <div style={{ fontWeight: 800 }}>{typeof tempC === 'number' ? `${tempC}°C` : '—'}</div>
+          <div style={{ fontWeight: 800 }}>{typeof tempF === 'number' ? `${tempF}°F` : '—'}</div>
           <div className="item-sub">Guests</div>
           <div style={{ fontWeight: 800 }}>
             {guests === true ? 'Allowed' : guests === false ? 'Not allowed' : '—'}
@@ -86,7 +96,7 @@ export default function Dashboard() {
           </button>
         </section>
 
-        {/* Roommates summary (polished chips) */}
+        {/* Roommates summary card */}
         <section className="card" style={{ display: 'grid', gap: 12 }}>
           <h3 className="section-title" style={{ margin: 0 }}>Roommates</h3>
 
@@ -111,7 +121,6 @@ export default function Dashboard() {
         </section>
       </div>
 
-      {/* Feature tiles */}
       <div className="grid-2">
         <StatCard
           title="Preferences"
@@ -140,7 +149,7 @@ export default function Dashboard() {
           value={`${data.inventory.length} items`}
           icon={Boxes}
           variant="sky"
-          onClick={() => nav(`/groups/${activeGroupId}/inventory`)}  // fixed route
+          onClick={() => nav(`/groups/${activeGroupId}/inventory`)}
         />
       </div>
 
