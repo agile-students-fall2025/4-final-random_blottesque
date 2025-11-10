@@ -70,8 +70,6 @@ export default function ExpensesDashboard() {
         <p>You’re owed: <strong>${youreOwed.toFixed(2)}</strong></p>
         <p>You owe: <strong>${youOwe.toFixed(2)}</strong></p>
       </div>
-
-      <button className="btn btn-ghost btn-full" onClick={() => nav("/dashboard")}>HOME</button>
     </div>
   );
 }
