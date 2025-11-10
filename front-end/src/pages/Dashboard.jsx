@@ -169,14 +169,6 @@ export default function Dashboard() {
           onClick={() => nav(`/${activeGroupId}/inventory`)}
         />
       </div>
-
-      {/* Lists */}
-      <ChoreList chores={data.chores} />
-      <ExpenseList expenses={data.expenses} />
-
-      <div ref={inventoryRef}>
-        <InventoryList items={data.inventory} />
-      </div>
     </div>
   );
 }

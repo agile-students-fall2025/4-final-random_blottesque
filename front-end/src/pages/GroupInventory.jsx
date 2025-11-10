@@ -62,8 +62,6 @@ export default function GroupInventory() {
         />
         ))}
       </ul>
-
-      <button className="btn btn-ghost btn-full" onClick={()=>nav('/dashboard')}>HOME</button>
     </div>
   );
 }

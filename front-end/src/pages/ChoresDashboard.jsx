@@ -137,10 +137,6 @@ export default function ChoresDashboard() {
                     </ul>
                 }
             </section>
-
-            <button className="btn btn-ghost btn-full" onClick={() => nav("/dashboard")}>
-                HOME
-            </button>
         </div>
     )
 }
