@@ -43,11 +43,8 @@ export default function GroupInventory() {
           </div>
         </div>
         <div style={{display:"flex", gap:8}}>
-          <button className="btn btn-primary" onClick={() => nav("/${activeGroupId}/inventory/new")}>
+          <button className="btn btn-primary" onClick={() => nav(`/${activeGroupId}/inventory/new`)}>
             Add Item
-          </button>
-          <button className="btn btn-primary" onClick={() => alert('Editing items')}>
-            Edit Item
           </button>
         </div>
       </div>

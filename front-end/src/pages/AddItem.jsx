@@ -1,7 +1,9 @@
 import { useNavigate } from "react-router-dom";
+import { useApp } from '../context/AppContext';
 
 export default function AddItem() {
   const nav = useNavigate();
+  const { activeGroupId } = useApp();
   const handleSubmit = (e) => {
     e.preventDefault();
     nav("/${activeGroupId}/inventory");
@@ -17,7 +19,7 @@ export default function AddItem() {
         <input className="input" placeholder="Info" />
         <div style={{display:"flex", gap:8}}>
           <button className="btn btn-primary" type="submit">Add Item</button>
-          <button type="button" className="btn btn-secondary" onClick={()=>nav("/${activeGroupId}/inventory")}>Cancel</button>
+          <button type="button" className="btn btn-secondary" onClick={()=>nav(`/${activeGroupId}/inventory`)}>Cancel</button>
         </div>
       </form>
     </div>

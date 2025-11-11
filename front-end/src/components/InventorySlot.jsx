@@ -1,22 +1,11 @@
 import { Boxes } from 'lucide-react';
-
-function InfoPopup({ item }) {
-  return (
-    <div
-      style={{
-        padding: 10,
-        background: "#eee",
-        marginTop: 10,
-        borderRadius: 6,
-        textAlign: "center",
-      }}
-    >
-      <strong>Info</strong> <br/>Lorem Ipsum
-    </div>
-  );
-}
+import { useNavigate } from 'react-router-dom';
+import { useApp } from '../context/AppContext';
 
 export default function InventorySlot({ item,isActive,onSelect }) {
+  const nav = useNavigate();
+  const { activeGroupId } = useApp();
+
   return (
     <section className="card">
       <li key={item.id} className="card" style={{padding:10, boxShadow:'none', border:'1px solid var(--ring)'}}>
@@ -48,8 +37,36 @@ export default function InventorySlot({ item,isActive,onSelect }) {
         </div>
       </li>
 
-      {isActive && <InfoPopup item={item} />}
+      {isActive && 
+        <div className="extra-info" style={{
+          display:'grid', gap:12
+        }}>
+
+        <InfoPopup item={item} />
+        
+        <button className="btn btn-primary" onClick={() => nav(`/${activeGroupId}/inventory/${item.id}/edit`)}>
+          Edit Item
+        </button>
+        
+
+      </div>}
 
     </section>
+  );
+}
+
+function InfoPopup({ item }) {
+  return (
+    <div
+      style={{
+        padding: 10,
+        background: "#eee",
+        marginTop: 10,
+        borderRadius: 6,
+        textAlign: "center",
+      }}
+    >
+      <strong>Info</strong> <br/>Lorem Ipsum
+    </div>
   );
 }
