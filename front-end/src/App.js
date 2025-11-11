@@ -14,6 +14,7 @@ import AddExpense from './pages/AddExpense';
 import EditExpense from './pages/EditExpense';
 import GroupInventory from './pages/GroupInventory';
 import AddItem from './pages/AddItem';
+import EditItem from './pages/EditItem';
 import UserProfile from './pages/UserProfile';
 
 export default function App() {
@@ -44,6 +45,7 @@ export default function App() {
         {/*Inventory Routes*/}
         <Route path="/:groupId/inventory" element={<GroupInventory />} />
         <Route path="/:groupId/inventory/new" element={<AddItem />} />
+        <Route path="/:groupId/inventory/:itemId/edit" element={<EditItem />} />
 
         {/*Profile Routes*/}
         <Route path="/user-profile" element={<UserProfile />} />
