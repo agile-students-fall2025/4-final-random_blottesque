@@ -49,4 +49,18 @@ r.put('/groups/:id/prefs', (req, res) => {
   res.json(g.prefs);
 });
 
+// Inventory only
+r.get('/groups/:id/inventory', (req, res) => {
+  const g = db.getGroup(req.params.id);
+  if (!g) return res.status(404).json({ error: 'Group not found' });
+  res.json(g.inventory);
+});
+
+r.put('/groups/:id/inventory', (req, res) => {
+  const g = db.getGroup(req.params.id);
+  if (!g) return res.status(404).json({ error: 'Group not found' });
+  g.inventory = { ...g.inventory, ...(req.body || {}) };
+  res.json(g.inventory);
+});
+
 export default r;
