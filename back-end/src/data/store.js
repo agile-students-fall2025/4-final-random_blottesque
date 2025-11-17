@@ -1,5 +1,23 @@
 import { nanoid } from 'nanoid';
 
+const users = [
+  {
+    id: 'u1',
+    email: 'test@example.com',
+    password: 'testpassword'
+  },
+  {
+    id: 'u2',
+    email: 'alex@gmail.com',
+    password: 'password123'
+  },
+  {
+    id: 'u3',
+    email: 'sam@gmail.com',
+    password: 'password123'
+  }
+];
+
 const groups = [
   {
     id: 'g1',
@@ -24,6 +42,27 @@ const groups = [
 ];
 
 export const db = {
+  getUserByEmail(email) {
+    return users.find(u => u.email === email) || null;
+  },
+
+  createUser(input = {}) {
+    const { email, password } = input;
+    
+    if (this.getUserByEmail(email)) {
+      return null;
+    }
+
+    const user = {
+      id: nanoid(6),
+      email,
+      password
+    };
+
+    users.push(user);
+    return user;
+  },
+
   listGroups() {
     return groups;
   },
@@ -31,7 +70,6 @@ export const db = {
   getGroup(id) {
     return groups.find(g => g.id === id) || null;
   },
-
 
   createGroup(input = {}) {
     const normalizedComponents = Array.isArray(input.components)
@@ -67,7 +105,6 @@ export const db = {
     const g = this.getGroup(id);
     if (!g) return null;
 
-    // Normalize incoming shapes
     if (patch.preferences || patch.prefs) {
       const p = patch.preferences || patch.prefs;
       g.prefs = { ...g.prefs, ...p };

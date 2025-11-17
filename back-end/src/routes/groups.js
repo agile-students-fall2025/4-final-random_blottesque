@@ -3,6 +3,30 @@ import { db } from '../data/store.js';
 
 const r = Router();
 
+r.post('/login', (req, res) => {
+  const { email, password } = req.body;
+  
+  const user = db.getUserByEmail(email);
+  
+  if (!user || user.password !== password) {
+    return res.status(401).json({ error: 'Invalid credentials' });
+  }
+  
+  res.json({ token: `mock-token-${user.id}`, userId: user.id });
+});
+
+r.post('/signup', (req, res) => {
+  const { email, password } = req.body;
+  
+  const newUser = db.createUser({ email, password });
+  
+  if (!newUser) {
+    return res.status(409).json({ error: 'User already exists' });
+  }
+  
+  res.status(201).json({ id: newUser.id, email: newUser.email });
+});
+
 // List groups
 r.get('/groups', (_req, res) => {
   res.json(db.listGroups());
