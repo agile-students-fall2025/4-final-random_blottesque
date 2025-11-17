@@ -102,7 +102,7 @@ r.post('/groups/:id/chores', (req, res) => {
   res.status(201).json(chore);
 });
 
-// Edit chore
+// Edit chore (or update done status)
 r.put('/groups/:id/chores/:cid', (req, res) => {
   const chore = db.updateChore(req.params.id, req.params.cid, req.body || {});
   if (!chore) return res.status(404).json({ error: 'Chore not found' });
@@ -115,7 +115,5 @@ r.delete('/groups/:gid/chores/:cid', (req, res) => {
   if (!ok) return res.status(404).json({ error: 'Chore not found' });
   res.json({ ok: true });
 });
-
-
 
 export default r;

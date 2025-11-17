@@ -124,7 +124,7 @@ export default function ChoresDashboard() {
                                 </div>
                                 {editMode && (
                                     <div style={{ display: 'flex', gap: 8 }}>
-                                        <button className='btn btn-ghost' onClick={() => nav(`/chores/${c.id}/edit)`)}>
+                                        <button className='btn btn-ghost' onClick={() => nav(`/chores/${c.id}/edit`)}>
                                             <Pencil size={14}></Pencil>
                                         </button>
                                         <button className='btn btn-ghost' onClick={() => alert('Deleted chore')}>
