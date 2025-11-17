@@ -1,6 +1,6 @@
 import { Link, NavLink } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { Home, PlusCircle, Settings, Boxes } from 'lucide-react';
+import { Home, PlusCircle, Settings } from 'lucide-react';
 
 export default function Layout({ children }) {
   const { groups, activeGroupId, setActiveGroupId } = useApp();

@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { CheckSquare, Square, ListChecks, Pencil, PlusSquare, Trash2 } from 'lucide-react';
+import { Pencil } from 'lucide-react';
 
 export default function EditChore() {
     const nav = useNavigate();

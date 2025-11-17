@@ -19,8 +19,8 @@ const groups = [
     components: { chores: true, expenses: true, inventory: true },
     prefs: { quietStart: '22:00', quietEnd: '06:00', temperatureF: 72, guestsAllowed: true },
     chores: [
-      { id: nanoid(), title: 'Trash',  due: '2025-11-08', assignee: 'alex@gmail.com', done: false },
-      { id: nanoid(), title: 'Dishes', due: '2025-11-07', assignee: 'sam@gmail.com',  done: true  }
+      { id: nanoid(), title: 'Trash',  due: '2025-11-08', assignee: 'alex@gmail.com', repeat: 'None', description: 'Take out' },
+      { id: nanoid(), title: 'Dishes', due: '2025-11-07', assignee: 'sam@gmail.com',  repeat: 'None', description: 'Clean up after party'  }
     ],
     expenses: [
       { id: nanoid(), description: 'Paper towels', amount: 7.5, paidBy: { email: 'alex@gmail.com' }, youOwe: true }
@@ -172,5 +172,44 @@ export const db = {
       expenses:  g.expenses,
       inventory: g.inventory
     };
+  },
+
+  createChore(id, input = {}) {
+    const g = this.getGroup(id);
+    if (!g) return null;
+
+    const chore = {
+      id: nanoid(),
+      title: input.title || 'New Chore',
+      due: input.due || null,
+      assignee: input.assignee || null,
+      repeat: input.repeat || 'None',
+      description: input.repeat || ''
+    }
+
+    g.chores.push(chore);
+    return chore;
+  },
+
+  updateChore(id, cid, patch = {}) {
+    const g = this.getGroup(id);
+    if (!g) return null;
+
+    const chore = g.chores.find(c => c.id === cid);
+    if (!chore) return null;
+
+    Object.assign(chore, patch);
+    return chore;
+  },
+
+  deleteChore(id, cid) {
+    const g = this.getGroup(id);
+    if (!g) return null;
+
+    const chore = g.chores.findIndex(c => c.id === cid);
+    if (i === -1) return null;
+
+    g.chores.splice(i, 1);
+    return true;
   }
 };

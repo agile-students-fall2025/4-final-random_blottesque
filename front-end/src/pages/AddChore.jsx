@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { CheckSquare, Square, ListChecks, Pencil, PlusSquare, Trash2 } from 'lucide-react';
+import { PlusSquare } from 'lucide-react';
 
 export default function AddChore() {
     const nav = useNavigate();
@@ -27,12 +27,18 @@ export default function AddChore() {
 
                 <label>
                     <div className="item-sub">Due</div>
+                    
                     <input className="input" placeholder="Due" />
                 </label>
 
                 <label>
-                    <div className="item-sub">Repeat</div>
-                    <select className="input" placeholder="Repeat" />
+                    <div className="item-sub">Choose chore repetition schedule</div>
+                    <select className="input" placeholder="Repeat">
+                        <option>None</option>
+                        <option>Daily</option>
+                        <option>Weekly</option>
+                        <option>Monthly</option>
+                    </select>
                 </label>
 
                 <label>

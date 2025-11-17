@@ -2,10 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import StatCard from '../components/StatCard';
-import ChoreList from '../components/ChoreList';
-import ExpenseList from '../components/ExpenseList';
-import InventoryList from '../components/InventoryList';
-import { UserRound, Users, SlidersHorizontal, ListChecks, Wallet2, Boxes } from 'lucide-react';
+import { UserRound, SlidersHorizontal, ListChecks, Wallet2, Boxes } from 'lucide-react';
 
 function fmtTime(t) {
   if (!t || typeof t !== 'string') return null;
