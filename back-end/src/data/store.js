@@ -19,8 +19,8 @@ const groups = [
     components: { chores: true, expenses: true, inventory: true },
     prefs: { quietStart: '22:00', quietEnd: '06:00', temperatureF: 72, guestsAllowed: true },
     chores: [
-      { id: nanoid(), title: 'Trash',  due: '2025-11-08', assignee: 'alex@gmail.com', repeat: 'None', description: 'Take out' },
-      { id: nanoid(), title: 'Dishes', due: '2025-11-07', assignee: 'sam@gmail.com',  repeat: 'None', description: 'Clean up after party'  }
+      { id: nanoid(), title: 'Trash',  due: '2025-11-08', assignee: 'alex@gmail.com', repeat: 'None', description: 'Take out', done: false },
+      { id: nanoid(), title: 'Dishes', due: '2025-11-07', assignee: 'sam@gmail.com',  repeat: 'None', description: 'Clean up after party', done: true  }
     ],
     expenses: [
       { id: nanoid(), description: 'Paper towels', amount: 7.5, paidBy: { email: 'alex@gmail.com' }, youOwe: true }
@@ -207,9 +207,9 @@ export const db = {
     if (!g) return null;
 
     const chore = g.chores.findIndex(c => c.id === cid);
-    if (i === -1) return null;
+    if (chore === -1) return null;
 
-    g.chores.splice(i, 1);
+    g.chores.splice(chore, 1);
     return true;
   }
 };
