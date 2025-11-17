@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { CheckSquare, Square, ListChecks, Pencil, PlusSquare, Trash2 } from 'lucide-react';
@@ -124,7 +124,7 @@ export default function ChoresDashboard() {
                                 </div>
                                 {editMode && (
                                     <div style={{ display: 'flex', gap: 8 }}>
-                                        <button className='btn btn-ghost' onClick={() => nav(`/chores/${c.id}/edit)`)}>
+                                        <button className='btn btn-ghost' onClick={() => nav(`/chores/${c.id}/edit`)}>
                                             <Pencil size={14}></Pencil>
                                         </button>
                                         <button className='btn btn-ghost' onClick={() => alert('Deleted chore')}>

@@ -87,4 +87,35 @@ r.put('/groups/:id/inventory', (req, res) => {
   res.json(g.inventory);
 });
 
+
+// Get chores only
+r.get('/groups/:id/chores', (req, res) => {
+  const g = db.getGroup(req.params.id);
+  if (!g) return res.status(404).json({ error: 'Group not found' });
+  res.json(g.chores);
+});
+
+// Add chore
+r.post('/groups/:id/chores', (req, res) => {
+  const chore = db.createChore(req.params.id, req.body || {});
+  if (!chore) return res.status(404).json({ error: 'Group not found' });
+  res.status(201).json(chore);
+});
+
+// Edit chore
+r.put('/groups/:id/chores/:cid', (req, res) => {
+  const chore = db.updateChore(req.params.id, req.params.cid, req.body || {});
+  if (!chore) return res.status(404).json({ error: 'Chore not found' });
+  res.json(chore);
+});
+
+// Delete chore
+r.delete('/groups/:gid/chores/:cid', (req, res) => {
+  const ok = db.deleteChore(req.params.gid, req.params.cid);
+  if (!ok) return res.status(404).json({ error: 'Chore not found' });
+  res.json({ ok: true });
+});
+
+
+
 export default r;
