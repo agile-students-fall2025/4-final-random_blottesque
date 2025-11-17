@@ -1,21 +1,12 @@
 import { nanoid } from 'nanoid';
 
+/** --------------------------------
+ * In-memory seed data
+ * -------------------------------- */
 const users = [
-  {
-    id: 'u1',
-    email: 'test@example.com',
-    password: 'testpassword'
-  },
-  {
-    id: 'u2',
-    email: 'alex@gmail.com',
-    password: 'password123'
-  },
-  {
-    id: 'u3',
-    email: 'sam@gmail.com',
-    password: 'password123'
-  }
+  { id: 'u1', email: 'test@example.com', password: 'testpassword', name: 'Test User' },
+  { id: 'u2', email: 'alex@gmail.com',  password: 'password123',  name: 'Alex' },
+  { id: 'u3', email: 'sam@gmail.com',   password: 'password123',  name: 'Sam'  }
 ];
 
 const groups = [
@@ -28,41 +19,82 @@ const groups = [
     components: { chores: true, expenses: true, inventory: true },
     prefs: { quietStart: '22:00', quietEnd: '06:00', temperatureF: 72, guestsAllowed: true },
     chores: [
-      { id: nanoid(), title: 'Trash', due: '2025-11-08', assignee: 'alex@gmail.com', done: false },
-      { id: nanoid(), title: 'Dishes', due: '2025-11-07', assignee: 'sam@gmail.com', done: true }
+      { id: nanoid(), title: 'Trash',  due: '2025-11-08', assignee: 'alex@gmail.com', done: false },
+      { id: nanoid(), title: 'Dishes', due: '2025-11-07', assignee: 'sam@gmail.com',  done: true  }
     ],
     expenses: [
       { id: nanoid(), description: 'Paper towels', amount: 7.5, paidBy: { email: 'alex@gmail.com' }, youOwe: true }
     ],
     inventory: [
-      { id: nanoid(), name: 'Milk', status: 'Low' },
+      { id: nanoid(), name: 'Milk',      status: 'Low'  },
       { id: nanoid(), name: 'Dish Soap', status: 'Good' }
     ]
   }
 ];
 
+// Simple token store (mock)
+const tokens = new Map(); // token -> { userId, ts }
+
+/** --------------------------------
+ * Data access API
+ * -------------------------------- */
 export const db = {
+  /* ---------- Users ---------- */
   getUserByEmail(email) {
-    return users.find(u => u.email === email) || null;
+    if (!email) return null;
+    const e = String(email).toLowerCase();
+    return users.find(u => u.email.toLowerCase() === e) || null;
+  },
+
+  getUser(id) {
+    return users.find(u => u.id === id) || null;
   },
 
   createUser(input = {}) {
-    const { email, password } = input;
-    
-    if (this.getUserByEmail(email)) {
-      return null;
-    }
+    const { email, password, name } = input;
+    if (!email || !password) return null;
+    if (this.getUserByEmail(email)) return null;
 
     const user = {
       id: nanoid(6),
-      email,
-      password
+      email: String(email).toLowerCase(),
+      password: String(password),
+      name: name || String(email).split('@')[0]
     };
-
     users.push(user);
     return user;
   },
 
+  updateUser(id, patch = {}) {
+    const u = this.getUser(id);
+    if (!u) return null;
+    // Only allow profile-ish fields (no email/password changes here)
+    const allowed = ['name', 'phone', 'photoUrl'];
+    for (const k of allowed) {
+      if (Object.prototype.hasOwnProperty.call(patch, k)) {
+        u[k] = patch[k];
+      }
+    }
+    return u;
+  },
+
+  sanitizeUser(user) {
+    if (!user) return null;
+    const { password, ...safe } = user;
+    return safe;
+  },
+
+  verifyUserPassword(user, password) {
+    return !!(user && String(user.password) === String(password));
+  },
+
+  issueToken(userId) {
+    const token = nanoid(16);
+    tokens.set(token, { userId, ts: Date.now() });
+    return token;
+  },
+
+  /* ---------- Groups ---------- */
   listGroups() {
     return groups;
   },
@@ -116,7 +148,7 @@ export const db = {
       g.prefs = {
         ...g.prefs,
         quietStart: q.start ?? g.prefs.quietStart,
-        quietEnd: q.end ?? g.prefs.quietEnd
+        quietEnd:   q.end   ?? g.prefs.quietEnd
       };
       delete patch.quietHours;
     }
@@ -133,11 +165,11 @@ export const db = {
     const g = this.getGroup(id);
     if (!g) return null;
     return {
-      group: { id: g.id, name: g.name },
-      prefs: g.prefs,
+      group:     { id: g.id, name: g.name },
+      prefs:     g.prefs,
       roommates: g.roommates,
-      chores: g.chores,
-      expenses: g.expenses,
+      chores:    g.chores,
+      expenses:  g.expenses,
       inventory: g.inventory
     };
   }
