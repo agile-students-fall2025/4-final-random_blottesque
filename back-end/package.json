@@ -3,34 +3,30 @@
     "version": "1.0.0",
     "type": "module",
     "scripts": {
-      "dev": "nodemon src/server.js",
-      "start": "node src/server.js",
-      "test": "mocha \"test/**/*.spec.js\"",
-  
-      "coverage": "c8 --reporter=text --reporter=lcov --check-coverage --branches=10 --functions=10 --lines=10 --statements=10 npm test",
-  
-      "coverage:cyryl":   "c8 --reporter=text --check-coverage --branches=10 --functions=10 --lines=10 --statements=10 mocha \"test/cyryl/**/*.spec.js\"",
-      "coverage:lina":    "c8 --reporter=text --check-coverage --branches=10 --functions=10 --lines=10 --statements=10 mocha \"test/lina/**/*.spec.js\"",
-      "coverage:luna":    "c8 --reporter=text --check-coverage --branches=10 --functions=10 --lines=10 --statements=10 mocha \"test/luna/**/*.spec.js\"",
-      "coverage:shritha": "c8 --reporter=text --check-coverage --branches=10 --functions=10 --lines=10 --statements=10 mocha \"test/shritha/**/*.spec.js\"",
-      "coverage:sunil":   "c8 --reporter=text --check-coverage --branches=10 --functions=10 --lines=10 --statements=10 mocha \"test/sunil/**/*.spec.js\"",
-  
-      "coverage:team": "c8 --reporter=text --reporter=lcov --check-coverage --branches=10 --functions=10 --lines=10 --statements=10 mocha \"test/{cyryl,lina,luna,shritha,sunil}/**/*.spec.js\"",
-      "coverage:members": "npm run coverage:cyryl && npm run coverage:lina && npm run coverage:luna && npm run coverage:shritha && npm run coverage:sunil"
+        "dev": "nodemon src/server.js",
+        "start": "node src/server.js",
+        "test": "mocha \"test/**/*.spec.js\"",
+        "coverage": "c8 --reporter=text --reporter=lcov --check-coverage --branches=10 --functions=10 --lines=10 --statements=10 npm test",
+        "coverage:cyryl": "c8 --reporter=text --check-coverage --branches=10 --functions=10 --lines=10 --statements=10 mocha \"test/cyryl/**/*.spec.js\"",
+        "coverage:lina": "c8 --reporter=text --check-coverage --branches=10 --functions=10 --lines=10 --statements=10 mocha \"test/lina/**/*.spec.js\"",
+        "coverage:luna": "c8 --reporter=text --check-coverage --branches=10 --functions=10 --lines=10 --statements=10 mocha \"test/luna/**/*.spec.js\"",
+        "coverage:shritha": "c8 --reporter=text --check-coverage --branches=10 --functions=10 --lines=10 --statements=10 mocha \"test/shritha/**/*.spec.js\"",
+        "coverage:sunil": "c8 --reporter=text --check-coverage --branches=10 --functions=10 --lines=10 --statements=10 mocha \"test/sunil/**/*.spec.js\"",
+        "coverage:team": "c8 --reporter=text --reporter=lcov --check-coverage --branches=10 --functions=10 --lines=10 --statements=10 mocha \"test/{cyryl,lina,luna,shritha,sunil}/**/*.spec.js\"",
+        "coverage:members": "npm run coverage:cyryl && npm run coverage:lina && npm run coverage:luna && npm run coverage:shritha && npm run coverage:sunil"
     },
     "dependencies": {
-      "cors": "^2.8.5",
-      "dotenv": "^17.2.3",
-      "express": "^4.19.2",
-      "morgan": "^1.10.0",
-      "nanoid": "^5.0.7"
+        "cors": "^2.8.5",
+        "dotenv": "^17.2.3",
+        "express": "^4.19.2",
+        "morgan": "^1.10.0",
+        "nanoid": "^5.0.7"
     },
     "devDependencies": {
-      "c8": "^9.1.0",
-      "chai": "^4.4.1",
-      "mocha": "^10.4.0",
-      "nodemon": "^3.0.1",
-      "supertest": "^7.0.0"
+        "c8": "^9.1.0",
+        "chai": "^4.5.0",
+        "mocha": "^10.8.2",
+        "nodemon": "^3.0.1",
+        "supertest": "^7.1.4"
     }
-  }
-  
+}
