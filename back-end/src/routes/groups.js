@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { db } from '../data/store.js';
+import '../data/db.mjs';
 
 const r = Router();
 
