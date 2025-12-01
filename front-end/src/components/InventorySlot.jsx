@@ -2,6 +2,8 @@ import { Boxes } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 
+//This is currently unused and out-of-date, as the inventory slots are now made directly in GroupInventory
+
 export default function InventorySlot({ item,isActive,onSelect }) {
   const nav = useNavigate();
   const { activeGroupId } = useApp();

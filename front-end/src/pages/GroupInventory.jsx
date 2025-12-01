@@ -5,7 +5,6 @@ import { Boxes, Pencil, Trash2, Plus } from 'lucide-react';
 import * as api from '../lib/api';
 
 export default function GroupInventory() {
-  const { groupId } = useParams();
   const nav = useNavigate();
   const { loading, activeGroupId, getActiveGroup, getDashboard } = useApp();
   const [data, setData] = useState(null);
@@ -14,7 +13,7 @@ export default function GroupInventory() {
   const group = getActiveGroup();
 
   const loadData = useCallback(async () => {
-    const gid = groupId || activeGroupId;
+    const gid = activeGroupId;
     if (!gid) return;
     try {
       const dashboard = await getDashboard(gid);
@@ -22,7 +21,7 @@ export default function GroupInventory() {
     } catch (err) {
       setError(err.message || 'Failed to load inventory');
     }
-  }, [groupId, activeGroupId, getDashboard]);
+  }, [activeGroupId, getDashboard]);
 
   useEffect(() => {
     loadData();
@@ -31,7 +30,7 @@ export default function GroupInventory() {
   const handleDelete = async (itemId) => {
     if (!window.confirm('Delete this item?')) return;
     
-    const gid = groupId || activeGroupId;
+    const gid = activeGroupId;
     try {
       await api.deleteInventoryItem(gid, itemId);
       setData(prevData => ({
@@ -47,7 +46,7 @@ export default function GroupInventory() {
     setActiveId(prev => (prev === id ? null : id));
   };
 
-  const gid = groupId || activeGroupId;
+  const gid = activeGroupId;
 
   if (loading) return <p className="item-sub">Loading…</p>;
   if (!data) return <p className="item-sub">Loading inventory…</p>;
@@ -156,7 +155,30 @@ export default function GroupInventory() {
                   </span>
 
                   {isActive && (
+                    <div
+                      style={{
+                        width: "90%",
+                        padding: 10,
+                        background: "#eee",
+                        marginTop: 10,
+                        borderRadius: 6,
+                        textAlign: "center",
+                        fontSize: 14,
+                        wordBreak: "break-word", 
+                        overflowWrap: "break-word"
+                      }}
+                    >
+                      <strong>Info</strong> <br/>{item.info}
+                    </div>
+
+                  )}
+
+                  {isActive && (
+
+                    
+                    
                     <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+
                       <button 
                         className="btn btn-ghost" 
                         style={{ padding: '6px 10px', height: 'auto' }}
