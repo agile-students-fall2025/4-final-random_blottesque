@@ -2,102 +2,94 @@ import request from 'supertest';
 import { expect } from 'chai';
 import app from '../../src/app.js';
 
-// Chore unti tests
-describe('Chores API (Lina))', () => {
-    
-    // get chore array
-    it('GET /api/groups/:id/chores -> get array', async() => {
-        const list = await request(app).get('/api/groups');
-        const id = list.body[0].id; // group id
+describe('Chores API (Lina)', () => {
+    let groupId;
+    let choreId;
 
-        const res = await request(app).get(`/api/groups/${id}/chores`);
+    before(async () => {
+        // Create a test group first
+        const createRes = await request(app)
+            .post('/api/groups')
+            .send({
+                name: 'Chores Test Group',
+                roommates: ['lina@gmail.com', 'test@gmail.com']
+            });
+        groupId = createRes.body._id;
+    });
+
+    it('GET /api/groups/:id/chores → returns array', async () => {
+        const res = await request(app).get(`/api/groups/${groupId}/chores`);
         expect(res.status).to.equal(200);
         expect(res.body).to.be.an('array');
     });
 
-    // add a new chore
-    it('POST /api/groups/:id/chores -> add a chore', async() => {
-        const list = await request(app).get('/api/groups');
-        const id = list.body[0].id; // group id
-
-        const res = await request(app).post(`/api/groups/${id}/chores`).send({
-            title: 'Clean Bathroom',
-            due: '11/17/2025',
-            assignee: 'lina@gmail.com',
-            repeat: 'Weekly',
-            description: 'Remember to buy paper towels before',
-            done: false
-        });
-
-        expect(res.status).to.equal(201);
-        expect(res.body).to.include.keys('id', 'title', 'due'); // others are optional?
-    });
-
-    // update/edit a chore (edit field or mark as done)
-    it('PUT /groups/:id/chores/:cid -> edit a chore, changing done field (edit and update are the same)', async () => {
-        const list = await request(app).get('/api/groups');
-        const id = list.body[0].id; // group id
-
-        // get one tested
-        const all = await request(app).get(`/api/groups/${id}/chores`);
-        let cid;
-
-        if (all.body[0] && all.body[0].id) {
-            cid = all.body[0].id;
-        }
-        else {
-            const chore = await request(app).post(`/api/groups/${id}/chores`).send({
+    it('POST /api/groups/:id/chores → creates a chore', async () => {
+        const res = await request(app)
+            .post(`/api/groups/${groupId}/chores`)
+            .send({
                 title: 'Clean Bathroom',
-                due: '11/17/2025',
+                due: '2025-11-17',
                 assignee: 'lina@gmail.com',
                 repeat: 'Weekly',
-                description: 'Remember to buy paper towels before',
-                done: false
+                description: 'Remember to buy paper towels before'
             });
 
-            cid = chore.body.id;
+        expect(res.status).to.equal(201);
+        expect(res.body).to.include.keys('id', 'title');
+        expect(res.body.title).to.equal('Clean Bathroom');
+        
+        choreId = res.body.id || res.body._id;
+    });
+
+    it('PUT /api/groups/:id/chores/:cid → updates done field', async () => {
+        if (!choreId) {
+            const chore = await request(app)
+                .post(`/api/groups/${groupId}/chores`)
+                .send({ title: 'Test Chore' });
+            choreId = chore.body.id || chore.body._id;
         }
 
-        const res = await request(app).put(`/api/groups/${id}/chores/${cid}`).send({ done: true });
+        const res = await request(app)
+            .put(`/api/groups/${groupId}/chores/${choreId}`)
+            .send({ done: true });
 
         expect(res.status).to.equal(200);
         expect(res.body.done).to.equal(true);
     });
 
-    // delete chore
-    it('DELETE /groups/:id/chores/:cid -> delete a chore', async () => {
-        const list = await request(app).get('/api/groups');
-        const id = list.body[0].id; // group id
-
-        // get one tested
-        const all = await request(app).get(`/api/groups/${id}/chores`);
-        let cid;
-
-        if (all.body[0] && all.body[0].id) {
-            cid = all.body[0].id;
-        }
-        else {
-            const chore = await request(app).post(`/api/groups/${id}/chores`).send({
-                title: 'Clean Bathroom',
-                due: '11/17/2025',
-                assignee: 'lina@gmail.com',
-                repeat: 'Weekly',
-                description: 'Remember to buy paper towels before',
-                done: false
-            });
-
-            cid = chore.body.id;
+    it('PUT /api/groups/:id/chores/:cid → updates title', async () => {
+        if (!choreId) {
+            const chore = await request(app)
+                .post(`/api/groups/${groupId}/chores`)
+                .send({ title: 'Test Chore' });
+            choreId = chore.body.id || chore.body._id;
         }
 
-        const res = await request(app).delete(`/api/groups/${id}/chores/${cid}`);
+        const res = await request(app)
+            .put(`/api/groups/${groupId}/chores/${choreId}`)
+            .send({ title: 'Updated Title' });
+
+        expect(res.status).to.equal(200);
+        expect(res.body.title).to.equal('Updated Title');
+    });
+
+    it('DELETE /api/groups/:gid/chores/:cid → deletes a chore', async () => {
+        // Create a chore to delete
+        const chore = await request(app)
+            .post(`/api/groups/${groupId}/chores`)
+            .send({ title: 'Chore to Delete' });
+        
+        const cid = chore.body.id || chore.body._id;
+
+        const res = await request(app)
+            .delete(`/api/groups/${groupId}/chores/${cid}`);
 
         expect(res.status).to.equal(200);
         expect(res.body.ok).to.equal(true);
     });
 
-    // 404 not found status code
-    it ('GET /api/groups/:bad/dashboard -> 404 status code', async () => {
-        const res = await request(app).get('/api/groups/__bad__/chores');
+    it('GET /api/groups/:bad/chores → returns 404', async () => {
+        const res = await request(app).get('/api/groups/000000000000000000000000/chores');
         expect(res.status).to.equal(404);
         expect(res.body).to.have.property('error');
     });
