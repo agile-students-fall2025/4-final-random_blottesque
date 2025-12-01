@@ -163,6 +163,7 @@ export function AppProvider({ children }) {
     
     // State setters
     setActiveGroupId,
+    setUser,
     
     // Auth
     login,

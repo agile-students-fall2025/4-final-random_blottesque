@@ -6,7 +6,7 @@ import * as api from '../lib/api';
 
 export default function UserProfile() {
   const nav = useNavigate();
-  const { user, logout } = useApp();
+  const { user, setUser, logout } = useApp();
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -27,13 +27,18 @@ export default function UserProfile() {
     setError('');
     
     try {
-      await api.updateUser(user._id, { name, phone });
+      const updatedUser = await api.updateUser(user._id, { name, phone });
+
       setEditing(false);
-      // Update local storage
-      const storedUser = api.getStoredUser();
-      if (storedUser) {
-        localStorage.setItem('roomier_user', JSON.stringify({ ...storedUser, name, phone }));
+
+      if (updatedUser) {
+        setUser({ ...user, ...updatedUser });
       }
+
+      localStorage.setItem(
+        'roomier_user',
+        JSON.stringify({ ...user, ...updatedUser })
+      );
     } catch (err) {
       setError(err.message || 'Failed to update profile');
     } finally {
@@ -174,6 +179,10 @@ export default function UserProfile() {
         </div>
       </section>
 
+      <button className="btn btn-primary btn-full" onClick={() => nav('/dashboard')}>
+        Back to Dashboard
+      </button>
+
       <button 
         className="btn btn-ghost btn-full" 
         onClick={handleLogout}
@@ -183,9 +192,7 @@ export default function UserProfile() {
         Sign Out
       </button>
 
-      <button className="btn btn-ghost btn-full" onClick={() => nav('/dashboard')}>
-        Back to Dashboard
-      </button>
+      
     </div>
   );
 }
