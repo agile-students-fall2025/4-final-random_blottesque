@@ -165,6 +165,8 @@ export default function GroupInventory() {
                         borderRadius: 6,
                         textAlign: "center",
                         fontSize: 14,
+                        wordBreak: "break-word", 
+                        overflowWrap: "break-word"
                       }}
                     >
                       <strong>Info</strong> <br/>{item.info}
