@@ -156,7 +156,28 @@ export default function GroupInventory() {
                   </span>
 
                   {isActive && (
+                    <div
+                      style={{
+                        width: "90%",
+                        padding: 10,
+                        background: "#eee",
+                        marginTop: 10,
+                        borderRadius: 6,
+                        textAlign: "center",
+                        fontSize: 14,
+                      }}
+                    >
+                      <strong>Info</strong> <br/>{item.info}
+                    </div>
+
+                  )}
+
+                  {isActive && (
+
+                    
+                    
                     <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+
                       <button 
                         className="btn btn-ghost" 
                         style={{ padding: '6px 10px', height: 'auto' }}
