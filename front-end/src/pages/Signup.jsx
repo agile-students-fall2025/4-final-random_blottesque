@@ -2,24 +2,32 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useApp } from '../context/AppContext';
 
-export default function LoginPage() {
+export default function SignupPage() {
   const nav = useNavigate();
-  const { login } = useApp();
+  const { signup } = useApp();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  async function handleLogin(e) {
+  async function handleSignup(e) {
     e.preventDefault();
     setError('');
     setLoading(true);
 
+    // Basic validation
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters');
+      setLoading(false);
+      return;
+    }
+
     try {
-      await login(email, password);
+      await signup(email, password, name || undefined);
       nav('/dashboard');
     } catch (err) {
-      setError(err.message || 'Login failed. Please check your credentials.');
+      setError(err.message || 'Signup failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -27,7 +35,7 @@ export default function LoginPage() {
 
   return (
     <div style={{display:'grid', gap:12, maxWidth:300, margin:'80px auto'}}>
-      <h1 style={{margin:0}}>Log In</h1>
+      <h1 style={{margin:0}}>Sign Up</h1>
 
       {error && (
         <div style={{
@@ -42,7 +50,16 @@ export default function LoginPage() {
         </div>
       )}
 
-      <form onSubmit={handleLogin} style={{display:'grid', gap:12}}>
+      <form onSubmit={handleSignup} style={{display:'grid', gap:12}}>
+        <input
+          className="input"
+          type="text"
+          placeholder="Name (optional)"
+          value={name}
+          onChange={e => setName(e.target.value)}
+          disabled={loading}
+        />
+
         <input
           className="input"
           type="email"
@@ -56,10 +73,11 @@ export default function LoginPage() {
         <input
           className="input"
           type="password"
-          placeholder="Password"
+          placeholder="Password (min 6 characters)"
           value={password}
           onChange={e => setPassword(e.target.value)}
           required
+          minLength={6}
           disabled={loading}
         />
 
@@ -68,18 +86,18 @@ export default function LoginPage() {
           type="submit"
           disabled={loading}
         >
-          {loading ? 'Logging in...' : 'Log In'}
+          {loading ? 'Creating Account...' : 'Create Account'}
         </button>
       </form>
 
       <p className="item-sub" style={{textAlign:'center'}}>
-        Don't have an account?{' '}
+        Already have an account?{' '}
         <span 
           className="link" 
-          onClick={()=>nav('/signup')}
+          onClick={()=>nav('/login')}
           style={{cursor: 'pointer', color: 'var(--indigo-600)', textDecoration: 'underline'}}
         >
-          Sign up
+          Log in
         </span>
       </p>
     </div>
