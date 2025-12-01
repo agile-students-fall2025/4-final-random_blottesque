@@ -1,14 +1,25 @@
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import GroupForm from '../components/GroupForm';
 import { useApp } from '../context/AppContext';
 
 export default function CreateGroup() {
   const { createGroup } = useApp();
   const nav = useNavigate();
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   async function handleSubmit(form) {
-    const g = await createGroup(form);
-    nav(`/groups/${g.id}/edit`);
+    setError('');
+    setLoading(true);
+    
+    try {
+      const g = await createGroup(form);
+      nav(`/groups/${g._id || g.id}/edit`);
+    } catch (err) {
+      setError(err.message || 'Failed to create group');
+      setLoading(false);
+    }
   }
 
   return (
@@ -18,7 +29,26 @@ export default function CreateGroup() {
         Name your household, add roommates, pick components, and set quiet hours.
       </p>
 
-      <GroupForm onSubmit={handleSubmit} submitLabel="Save" />
+      {error && (
+        <div style={{
+          padding: '10px 14px',
+          background: '#fee2e2',
+          border: '1px solid #fca5a5',
+          borderRadius: '8px',
+          color: '#dc2626',
+          fontSize: '14px',
+          marginBottom: 12
+        }}>
+          {error}
+        </div>
+      )}
+
+      <GroupForm 
+        onSubmit={handleSubmit} 
+        submitLabel={loading ? "Creating..." : "Save"} 
+        disabled={loading}
+      />
     </div>
   );
 }
+

@@ -16,7 +16,12 @@ export default function Layout({ children }) {
             value={activeGroupId ?? ''}
             onChange={(e) => setActiveGroupId(e.target.value)}
           >
-            {groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
+            {groups.length === 0 && <option value="">No groups</option>}
+            {groups.map(g => (
+              <option key={g._id || g.id} value={g._id || g.id}>
+                {g.name}
+              </option>
+            ))}
           </select>
         </div>
       </header>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import StatCard from '../components/StatCard';
@@ -13,52 +13,84 @@ function fmtTime(t) {
   return `${hour12}:${M.padStart(2, '0')} ${ampm}`;
 }
 
-const c2f = (c) => Math.round((c * 9) / 5 + 32);
-
 export default function Dashboard() {
   const nav = useNavigate();
-  const { loading, getActiveGroup, activeGroupId, getDashboard } = useApp();
+  const { loading, getActiveGroup, activeGroupId, getDashboard, user, logout } = useApp();
   const group = getActiveGroup();
   const [data, setData] = useState(null);
+  const [error, setError] = useState('');
 
-  const inventoryRef = useRef(null);
-
-  useEffect(() => {
-    let mounted = true;
-    if (activeGroupId) getDashboard(activeGroupId).then(d => mounted && setData(d));
-    return () => { mounted = false; };
+  const loadData = useCallback(async () => {
+    if (!activeGroupId) return;
+    try {
+      const dashboard = await getDashboard(activeGroupId);
+      setData(dashboard);
+    } catch (err) {
+      console.error('Dashboard load error:', err);
+      setError(err.message || 'Failed to load dashboard');
+    }
   }, [activeGroupId, getDashboard]);
 
-  if (loading || !group || !data) return <p className="item-sub">Loading…</p>;
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
-  const choresDue = data.chores.filter(c => !c.done).length;
-  const youOwe = data.expenses.filter(e => e.youOwe).reduce((s, e) => s + e.amount, 0);
-  const youreOwed = data.expenses.filter(e => !e.youOwe).reduce((s, e) => s + e.amount, 0);
+  const handleLogout = () => {
+    logout();
+    nav('/login');
+  };
 
-  // --- Preferences summary values ---
-  const quietStart =
-    group?.quietHours?.start ?? group?.quietStart ?? data?.prefs?.quietStart;
-  const quietEnd =
-    group?.quietHours?.end ?? group?.quietEnd ?? data?.prefs?.quietEnd;
+  if (loading) return <p className="item-sub">Loading…</p>;
+  
+  if (!group) {
+    return (
+      <div style={{ display: 'grid', gap: 12 }}>
+        <div className="card" style={{ textAlign: 'center', padding: 24 }}>
+          <h2>Welcome to Roomier!</h2>
+          <p className="item-sub">You don't have any groups yet.</p>
+          <button className="btn btn-primary" onClick={() => nav('/groups/new')}>
+            Create Your First Group
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!data) return <p className="item-sub">Loading dashboard…</p>;
+
+  const choresDue = data.chores?.filter(c => !c.done).length || 0;
+  const youOwe = data.expenses?.filter(e => e.youOwe).reduce((s, e) => s + (e.amount || 0), 0) || 0;
+  const youreOwed = data.expenses?.filter(e => !e.youOwe).reduce((s, e) => s + (e.amount || 0), 0) || 0;
+
+  // Preferences
+  const quietStart = group?.prefs?.quietStart || data?.prefs?.quietStart;
+  const quietEnd = group?.prefs?.quietEnd || data?.prefs?.quietEnd;
   const quietText =
     (fmtTime(quietStart) && fmtTime(quietEnd))
       ? `${fmtTime(quietStart)}–${fmtTime(quietEnd)}`
       : 'Set quiet hours';
 
-  const rawF =
-    group?.preferences?.temperatureF ?? data?.prefs?.temperatureF;
-  const rawC =
-    group?.preferences?.temperatureC ?? data?.prefs?.temperatureC;
-  const tempF = typeof rawF === 'number' ? rawF : (typeof rawC === 'number' ? c2f(rawC) : null);
+  const tempF = group?.prefs?.temperatureF ?? data?.prefs?.temperatureF;
+  const guests = group?.prefs?.guestsAllowed ?? data?.prefs?.guestsAllowed;
 
-  const guests = group?.preferences?.guestsAllowed ?? data?.prefs?.guestsAllowed;
-
-  // --- Roommates summary ---
+  // Roommates
   const roommates = Array.isArray(group?.roommates) ? group.roommates : [];
   const rmLabel = (r) => (typeof r === 'string' ? r : (r?.name || r?.email || '—'));
 
   return (
     <div style={{ display: 'grid', gap: 12 }}>
+      {error && (
+        <div style={{
+          padding: '10px 14px',
+          background: '#fee2e2',
+          border: '1px solid #fca5a5',
+          borderRadius: '8px',
+          color: '#dc2626',
+          fontSize: '14px'
+        }}>
+          {error}
+        </div>
+      )}
 
       {/* User Profile card */}
       <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -67,12 +99,14 @@ export default function Dashboard() {
             <UserRound size={18} />
           </div>
           <div>
-            <h1 style={{ margin: 0, fontSize: 18, fontWeight: 800 }}>Welcome<br/>_Username_</h1>
+            <h1 style={{ margin: 0, fontSize: 18, fontWeight: 800 }}>
+              Welcome<br/>{user?.name || user?.email || 'Guest'}
+            </h1>
           </div>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
-          <button className="btn btn-primary" onClick={() => nav('/user-profile')}>Profile</button>
-          <button className="btn btn-secondary" onClick={() => nav('/signout')}>Sign Out</button>
+          <button className="btn btn-ghost" onClick={() => nav('/user-profile')}>Profile</button>
+          <button className="btn btn-ghost" onClick={handleLogout}>Sign Out</button>
         </div>
       </div>
 
@@ -94,7 +128,6 @@ export default function Dashboard() {
 
       {/* Preferences + Roommates summary cards */}
       <div className="grid-2">
-        {/* Preferences summary card (keep) */}
         <section className="card" style={{ display: 'grid', gap: 8 }}>
           <h3 className="section-title" style={{ marginTop: 0 }}>Preferences</h3>
           <div className="item-sub">Quiet Hours</div>
@@ -110,7 +143,6 @@ export default function Dashboard() {
           </button>
         </section>
 
-        {/* Roommates summary card */}
         <section className="card" style={{ display: 'grid', gap: 12 }}>
           <h3 className="section-title" style={{ margin: 0 }}>Roommates</h3>
 
@@ -160,7 +192,7 @@ export default function Dashboard() {
         />
         <StatCard
           title="Inventory"
-          value={`${data.inventory.length} items`}
+          value={`${data.inventory?.length || 0} items`}
           icon={Boxes}
           variant="sky"
           onClick={() => nav(`/${activeGroupId}/inventory`)}

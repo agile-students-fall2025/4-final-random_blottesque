@@ -1,91 +1,191 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { UserRound} from 'lucide-react';
-
+import { useNavigate } from 'react-router-dom';
+import { UserRound, Mail, Phone, LogOut } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import * as api from '../lib/api';
 
 export default function UserProfile() {
   const nav = useNavigate();
-  const { loading, activeGroupId, getDashboard } = useApp();
+  const { user, logout } = useApp();
+  const [editing, setEditing] = useState(false);
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    let mounted = true;
-    return () => { mounted = false; };
-  });
+    if (user) {
+      setName(user.name || '');
+      setPhone(user.phone || '');
+    }
+  }, [user]);
 
-  if (loading) return <p className="item-sub">Loading…</p>;
+  const handleSave = async () => {
+    if (!user?._id) return;
+    
+    setSaving(true);
+    setError('');
+    
+    try {
+      await api.updateUser(user._id, { name, phone });
+      setEditing(false);
+      // Update local storage
+      const storedUser = api.getStoredUser();
+      if (storedUser) {
+        localStorage.setItem('roomier_user', JSON.stringify({ ...storedUser, name, phone }));
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to update profile');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleLogout = () => {
+    logout();
+    nav('/login');
+  };
+
+  if (!user) {
+    return (
+      <div className="card" style={{ textAlign: 'center', padding: 24 }}>
+        <p>Please log in to view your profile.</p>
+        <button className="btn btn-primary" onClick={() => nav('/login')}>
+          Log In
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div style={{display:'grid', gap:12}}>
-      <section className="card">
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            textAlign: "center",
-            boxShadow:'none', border:'1px solid var(--ring)',
-            
-          }}
-        >
-
-          <img
-            src="/favicon.ico"
-            alt={"User Image"}
-            style={{
-              width: 100,
-              height: 100,
-              borderRadius: "50%",
-              objectFit: "cover",
-              border: "2px solid #ccc",
-              marginBottom: 12,
-              marginTop: 30,
-              marginBottom: 20
-            }}
-          />
-
-          <div
-            style={{
-              fontSize: 28,
-              fontWeight: 600,
-              marginBottom: 15,
-            }}
-          >
-            User Name
-          </div>
-
-          <div
-            style={{
-              fontSize: 18,
-              color: "#666",
-              marginBottom: 5,
-            }}>
-            Phone Number
-          </div>
-
-          <div
-            style={{
-              fontSize: 18,
-              color: "#666",
-              marginBottom: 25,
-            }}>
-            Email
-          </div>
-
-          <div
-          style={{
-              marginBottom: 25,
-            }}>
-            <button className="btn btn-ghost btn-full" onClick={()=>alert('User settings in future sprint')}>Settings</button>
-          </div>
-          
+      {error && (
+        <div style={{
+          padding: '10px 14px',
+          background: '#fee2e2',
+          border: '1px solid #fca5a5',
+          borderRadius: '8px',
+          color: '#dc2626',
+          fontSize: '14px'
+        }}>
+          {error}
         </div>
+      )}
 
+      <section className="card">
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          textAlign: "center",
+          padding: 20
+        }}>
+          <div style={{
+            width: 100,
+            height: 100,
+            borderRadius: "50%",
+            background: 'var(--indigo-50)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: 16
+          }}>
+            <UserRound size={48} color="var(--indigo-600)" />
+          </div>
+
+          {editing ? (
+            <div style={{ width: '100%', maxWidth: 300 }}>
+              <label style={{ display: 'block', marginBottom: 12 }}>
+                <div className="item-sub" style={{ textAlign: 'left' }}>Name</div>
+                <input 
+                  className="input"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Your name"
+                />
+              </label>
+              
+              <label style={{ display: 'block', marginBottom: 12 }}>
+                <div className="item-sub" style={{ textAlign: 'left' }}>Phone</div>
+                <input 
+                  className="input"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="Phone number"
+                />
+              </label>
+
+              <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+                <button 
+                  className="btn btn-primary"
+                  onClick={handleSave}
+                  disabled={saving}
+                >
+                  {saving ? 'Saving...' : 'Save'}
+                </button>
+                <button 
+                  className="btn btn-ghost"
+                  onClick={() => setEditing(false)}
+                  disabled={saving}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div style={{ fontSize: 24, fontWeight: 600, marginBottom: 8 }}>
+                {user.name || 'User'}
+              </div>
+
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 8,
+                color: '#666',
+                marginBottom: 4
+              }}>
+                <Mail size={16} />
+                {user.email}
+              </div>
+
+              {user.phone && (
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: 8,
+                  color: '#666',
+                  marginBottom: 16
+                }}>
+                  <Phone size={16} />
+                  {user.phone}
+                </div>
+              )}
+
+              <button 
+                className="btn btn-ghost"
+                onClick={() => setEditing(true)}
+                style={{ marginTop: 12 }}
+              >
+                Edit Profile
+              </button>
+            </>
+          )}
+        </div>
       </section>
 
-      <button className="btn btn-ghost btn-full" onClick={()=>nav('/dashboard')}>HOME</button>
+      <button 
+        className="btn btn-ghost btn-full" 
+        onClick={handleLogout}
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+      >
+        <LogOut size={18} />
+        Sign Out
+      </button>
+
+      <button className="btn btn-ghost btn-full" onClick={() => nav('/dashboard')}>
+        Back to Dashboard
+      </button>
     </div>
   );
 }
-
