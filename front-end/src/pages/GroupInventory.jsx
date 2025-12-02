@@ -11,6 +11,7 @@ export default function GroupInventory() {
   const [activeId, setActiveId] = useState(null);
   const [error, setError] = useState('');
   const group = getActiveGroup();
+  const [query, setQuery] = useState("");
 
   const loadData = useCallback(async () => {
     const gid = activeGroupId;
@@ -60,6 +61,10 @@ export default function GroupInventory() {
     }
   };
 
+  const checkQuery = (item) => {
+    item.name.toLowerCase().includes(query.toLowerCase())
+  };
+
   return (
     <div style={{display:'grid', gap:12}}>
       {error && (
@@ -101,106 +106,128 @@ export default function GroupInventory() {
           </button>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 12 }}>
-          {data.inventory?.map(item => {
-            const statusStyle = getStatusColor(item.status);
-            const isActive = activeId === (item._id || item.id);
-            
-            return (
-              <div 
-                key={item._id || item.id} 
-                className="card" 
-                style={{ 
-                  padding: 12, 
-                  cursor: 'pointer',
-                  border: isActive ? '2px solid var(--sky-600)' : '1px solid var(--ring)',
-                  transition: 'all 0.2s'
-                }}
-                onClick={() => handleSelect(item._id || item.id)}
-              >
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                  <div style={{ 
-                    width: 60, 
-                    height: 60, 
-                    borderRadius: 12, 
-                    background: 'var(--sky-50)', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center' 
-                  }}>
-                    <Boxes size={28} color="var(--sky-600)" />
-                  </div>
-                  
-                  <div style={{ 
-                    fontWeight: 600, 
-                    fontSize: 14, 
-                    textAlign: 'center',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    width: '100%'
-                  }}>
-                    {item.name}
-                  </div>
-                  
-                  <span style={{
-                    padding: '4px 10px',
-                    borderRadius: 999,
-                    fontSize: 12,
-                    fontWeight: 600,
-                    background: statusStyle.bg,
-                    color: statusStyle.color
-                  }}>
-                    {item.status}
-                  </span>
 
-                  {isActive && (
-                    <div
-                      style={{
-                        width: "90%",
-                        padding: 10,
-                        background: "#eee",
-                        marginTop: 10,
-                        borderRadius: 6,
-                        textAlign: "center",
-                        fontSize: 14,
-                        wordBreak: "break-word", 
-                        overflowWrap: "break-word"
-                      }}
-                    >
-                      <strong>Info</strong> <br/>{item.info}
+        <div>
+
+          <input
+            type="text"
+            placeholder="Search..."
+            className="input"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            style={{marginBottom: 10, width: "100%" }}
+          />
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 12 }}>
+            {data.inventory?.filter(item => 
+            item.name?.toLowerCase().includes(query.toLowerCase()) ||
+            item.info?.toLowerCase().includes(query.toLowerCase())
+            ).map(item => {
+
+              const statusStyle = getStatusColor(item.status);
+              const isActive = activeId === (item._id || item.id);
+              
+              return (
+
+                <div 
+                  key={item._id || item.id} 
+                  className="card" 
+                  style={{ 
+                    padding: 12, 
+                    cursor: 'pointer',
+                    border: isActive ? '2px solid var(--sky-600)' : '1px solid var(--ring)',
+                    transition: 'all 0.2s'
+                  }}
+                  onClick={() => handleSelect(item._id || item.id)}
+                >
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+                    <div style={{ 
+                      width: 60, 
+                      height: 60, 
+                      borderRadius: 12, 
+                      background: 'var(--sky-50)', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center' 
+                    }}>
+                      <Boxes size={28} color="var(--sky-600)" />
                     </div>
-
-                  )}
-
-                  {isActive && (
-
                     
-                    
-                    <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-
-                      <button 
-                        className="btn btn-ghost" 
-                        style={{ padding: '6px 10px', height: 'auto' }}
-                        onClick={(e) => { e.stopPropagation(); nav(`/${gid}/inventory/${item._id || item.id}/edit`); }}
-                      >
-                        <Pencil size={14} />
-                      </button>
-                      <button 
-                        className="btn btn-ghost" 
-                        style={{ padding: '6px 10px', height: 'auto' }}
-                        onClick={(e) => { e.stopPropagation(); handleDelete(item._id || item.id); }}
-                      >
-                        <Trash2 size={14} />
-                      </button>
+                    <div style={{ 
+                      fontWeight: 600, 
+                      fontSize: 14, 
+                      textAlign: 'center',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      width: '100%'
+                    }}>
+                      {item.name}
                     </div>
-                  )}
+                    
+                    <span style={{
+                      padding: '4px 10px',
+                      borderRadius: 999,
+                      fontSize: 12,
+                      fontWeight: 600,
+                      background: statusStyle.bg,
+                      color: statusStyle.color
+                    }}>
+                      {item.status}
+                    </span>
+
+                    {/* Only show info if clicked on and info exists */}
+                    {isActive && (item.info.length > 0) && (
+                      <div
+                        style={{
+                          width: "90%",
+                          padding: 10,
+                          background: "#eee",
+                          marginTop: 10,
+                          borderRadius: 6,
+                          textAlign: "center",
+                          fontSize: 14,
+                          wordBreak: "break-word", 
+                          overflowWrap: "break-word"
+                        }}
+                      >
+                        <strong>Info</strong> <br/>{item.info}
+                      </div>
+
+                    )}
+
+                    {isActive && (
+
+                      
+                      
+                      <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+
+                        <button 
+                          className="btn btn-ghost" 
+                          style={{ padding: '6px 10px', height: 'auto' }}
+                          onClick={(e) => { e.stopPropagation(); nav(`/${gid}/inventory/${item._id || item.id}/edit`); }}
+                        >
+                          <Pencil size={14} />
+                        </button>
+                        <button 
+                          className="btn btn-ghost" 
+                          style={{ padding: '6px 10px', height: 'auto' }}
+                          onClick={(e) => { e.stopPropagation(); handleDelete(item._id || item.id); }}
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
+
         </div>
+      
       )}
+
     </div>
   );
 }
