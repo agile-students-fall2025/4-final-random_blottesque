@@ -507,6 +507,27 @@ router.delete('/groups/:gid/expenses/:eid', async (req, res) => {
   }
 });
 
+/**
+ * GET /api/groups/:id/expenses/summary
+ * Get the total expense amount for a group
+ */
+router.get('/groups/:id/expenses/summary', async (req, res) => {
+  try {
+    const group = await Group.findById(req.params.id);
+    
+    if (!group) {
+      return res.status(404).json({ error: 'Group not found' });
+    }
+
+    const total = group.expenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+    res.json({ total });
+  } catch (error) {
+    console.error('Get expense summary error:', error);
+    res.status(500).json({ error: 'Failed to calculate total expenses' });
+  }
+});
+
+
 // ==================== INVENTORY ROUTES ====================
 
 /**
