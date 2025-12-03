@@ -43,18 +43,23 @@ export default function Dashboard() {
   if (loading) return <p className="item-sub">Loading…</p>;
   
   if (!group) {
-    return (
-      <div style={{ display: 'grid', gap: 12 }}>
-        <div className="card" style={{ textAlign: 'center', padding: 24 }}>
-          <h2>Welcome to Roomier!</h2>
-          <p className="item-sub">You don't have any groups yet.</p>
+  return (
+    <div style={{ display: 'grid', gap: 12 }}>
+      <div className="card" style={{ textAlign: 'center', padding: 24 }}>
+        <h2>Welcome to Roomier!</h2>
+        <p className="item-sub">You don't have any groups yet.</p>
+        <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginTop: 16 }}>
           <button className="btn btn-primary" onClick={() => nav('/groups/new')}>
             Create Your First Group
           </button>
+          <button className="btn btn-ghost" onClick={() => nav('/groups/join')}>
+            Join a Group
+          </button>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
   if (!data) return <p className="item-sub">Loading dashboard…</p>;
 

@@ -7,7 +7,7 @@ import EditGroup from './pages/EditGroup';
 import ChoresDashboard from './pages/ChoresDashboard';
 import AddChore from './pages/AddChore';
 import EditChore from './pages/EditChore';
-
+import JoinGroup from './pages/JoinGroup';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import ExpensesDashboard from './pages/ExpensesDashboard';
@@ -56,6 +56,9 @@ export default function App() {
 
           {/* Profile Routes */}
           <Route path="/user-profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+
+          {/* Join Group Routes */}
+          <Route path="/groups/join" element={<ProtectedRoute><JoinGroup /></ProtectedRoute>} />
 
       </Routes>
     </Layout>
