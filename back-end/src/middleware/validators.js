@@ -29,8 +29,7 @@ export const validateSignup = [
     .optional()
     .trim()
     .isLength({ min: 1, max: 100 })
-    .withMessage('Name must be between 1 and 100 characters'),
-  handleValidationErrors
+    .withMessage('Name must be between 1 and 100 characters')
 ];
 
 export const validateLogin = [
@@ -41,8 +40,7 @@ export const validateLogin = [
     .normalizeEmail(),
   body('password')
     .notEmpty()
-    .withMessage('Password is required'),
-  handleValidationErrors
+    .withMessage('Password is required')
 ];
 
 // Group validation rules
