@@ -22,7 +22,7 @@ describe('Dashboard API (Cyryl)', () => {
     expect(res.status).to.equal(200);
     expect(res.body).to.have.keys(['group', 'prefs', 'roommates', 'chores', 'expenses', 'inventory']);
     expect(res.body.group).to.include.keys('id', 'name');
-    expect(res.body.prefs).to.include.keys('quietStart', 'quietEnd', 'temperatureF', 'guestsAllowed');
+    expect(res.body.prefs).to.include.keys('quietStart', 'quietEnd', 'temperatureF', 'guestsAllowed', 'smokingAllowed', 'drinkingAllowed', 'partiesAllowed', 'nightTimeGuestsAllowed', 'accommodations');
     expect(res.body.roommates).to.be.an('array');
     expect(res.body.chores).to.be.an('array');
     expect(res.body.expenses).to.be.an('array');

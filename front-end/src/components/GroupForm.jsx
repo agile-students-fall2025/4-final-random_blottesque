@@ -46,6 +46,34 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
       : true
   );
 
+  const [smokingAllowed, setSmokingAllowed] = useState(
+    typeof initial?.preferences?.smokingAllowed === 'boolean'
+      ? initial.preferences.smokingAllowed
+      : true
+  );
+
+  const [drinkingAllowed, setDrinkingAllowed] = useState(
+    typeof initial?.preferences?.drinkingAllowed === 'boolean'
+      ? initial.preferences.drinkingAllowed
+      : true
+  );
+
+  const [partiesAllowed, setPartiesAllowed] = useState(
+    typeof initial?.preferences?.partiesAllowed === 'boolean'
+      ? initial.preferences.partiesAllowed
+      : true
+  );
+
+  const [nightTimeGuestsAllowed, setNightTimeGuestsAllowed] = useState(
+    typeof initial?.preferences?.nightTimeGuestsAllowed === 'boolean'
+      ? initial.preferences.nightTimeGuestsAllowed
+      : true
+  );
+
+  const [accommodationsTrue, setAccommodationsTrue] = useState(false);
+  const [accommodations, setAccommodations] = useState(false);
+
+
   async function handleSubmit(e) {
     e.preventDefault();
     const payload = {
@@ -202,7 +230,136 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
             </label>
           </div>
         </div>
+
+        {/* Smoking */}
+        <div style={{ display: 'grid', gap: 8 }}>
+          <div className="item-sub">Smoking</div>
+          <div style={{ display:'flex', gap:8 }}>
+            <label className="check">
+              <input
+                type="radio"
+                name="smoking"
+                checked={smokingAllowed === true}
+                onChange={() => setSmokingAllowed(true)}
+              />
+              <span>Allowed</span>
+            </label>
+            <label className="check">
+              <input
+                type="radio"
+                name="smoking"
+                checked={smokingAllowed === false}
+                onChange={() => setSmokingAllowed(false)}
+              />
+              <span>Not allowed</span>
+            </label>
+          </div>
+        </div>
+
+        {/* Drinking */}
+        <div style={{ display: 'grid', gap: 8 }}>
+          <div className="item-sub">Drinking</div>
+          <div style={{ display:'flex', gap:8 }}>
+            <label className="check">
+              <input
+                type="radio"
+                name="drinking"
+                checked={drinkingAllowed === true}
+                onChange={() => setDrinkingAllowed(true)}
+              />
+              <span>Allowed</span>
+            </label>
+            <label className="check">
+              <input
+                type="radio"
+                name="drinking"
+                checked={drinkingAllowed === false}
+                onChange={() => setDrinkingAllowed(false)}
+              />
+              <span>Not allowed</span>
+            </label>
+          </div>
+        </div>
       </section>
+
+      {/* Parties */}
+        <div style={{ display: 'grid', gap: 8 }}>
+          <div className="item-sub">Parties</div>
+          <div style={{ display:'flex', gap:8 }}>
+            <label className="check">
+              <input
+                type="radio"
+                name="parties"
+                checked={partiesAllowed === true}
+                onChange={() => setPartiesAllowed(true)}
+              />
+              <span>Allowed</span>
+            </label>
+            <label className="check">
+              <input
+                type="radio"
+                name="parties"
+                checked={partiesAllowed === false}
+                onChange={() => setPartiesAllowed(false)}
+              />
+              <span>Not allowed</span>
+            </label>
+          </div>
+      </div>
+      
+      {/* Night Time Guests */}
+        <div style={{ display: 'grid', gap: 8 }}>
+          <div className="item-sub">Night Time Guests</div>
+          <div style={{ display:'flex', gap:8 }}>
+            <label className="check">
+              <input
+                type="radio"
+                name="nightTimeGuests"
+                checked={nightTimeGuestsAllowed === true}
+                onChange={() => setNightTimeGuestsAllowed(true)}
+              />
+              <span>Allowed</span>
+            </label>
+            <label className="check">
+              <input
+                type="radio"
+                name="nightTimeGuests"
+                checked={nightTimeGuestsAllowed === false}
+                onChange={() => setNightTimeGuestsAllowed(false)}
+              />
+              <span>Not allowed</span>
+            </label>
+          </div>
+      </div>
+      
+      {/* Accommodations */}
+        <div style={{ display: 'grid', gap: 8 }}>
+          <div className="item-sub">Accommodations</div>
+          <div style={{ display:'flex', gap:8 }}>
+            <label className="check">
+              <input
+                type="radio"
+                name="accommodationsCheck"
+                checked={accommodationsTrue}
+              onChange={(e) => {
+                const checked = e.target.checked;
+                setAccommodationsTrue(checked);
+                if (!checked) setAccommodations('None');
+                }}
+              />
+              <span>Accommodations Needed?</span>
+          </label>
+          {accommodationsTrue && (
+            <input
+              type="text"
+              placeholder='Enter accommodations'
+              value={accommodations}
+              onChange={(e) => setAccommodations(e.target.value)}
+              style={{ padding: 6 }}
+            />
+          )}
+          </div>
+        </div>
 
       <button className="btn btn-primary btn-full">{submitLabel}</button>
     </form>
