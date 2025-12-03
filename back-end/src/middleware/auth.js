@@ -10,7 +10,6 @@ export const generateToken = (userId) => {
   );
 };
 
-// Verify token middleware
 export const authenticate = async (req, res, next) => {
   try {
     // Get token from header
@@ -81,7 +80,6 @@ export const optionalAuth = async (req, res, next) => {
     
     next();
   } catch (error) {
-    // Silently continue without user if token is invalid
     next();
   }
 };
