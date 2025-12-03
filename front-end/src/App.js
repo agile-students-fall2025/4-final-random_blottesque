@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
 import Dashboard from './pages/Dashboard';
 import CreateGroup from './pages/CreateGroup';
 import EditGroup from './pages/EditGroup';
@@ -22,34 +23,38 @@ export default function App() {
     <Layout>
       <Routes>
 
-        {/* Authentication Routes */}
+        {/* Authentication Routes - no login required*/}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/signout" element={<Signup />} /> {/* Keep for backwards compat */}
 
-        {/* Group Home Routes */}
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/groups/new" element={<CreateGroup />} />
-        <Route path="/groups/:groupId/edit" element={<EditGroup />} />
+        {/* Default route - redirect to login */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
 
-        {/* Chores Routes */}
-        <Route path="/chores" element={<ChoresDashboard />} />
-        <Route path="/chores/add" element={<AddChore />} />
-        <Route path="/chores/:choreId/edit" element={<EditChore />} />
+        {/* Protected Routes */}
+          {/* Group Home Routes */}
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/groups/new" element={<ProtectedRoute><CreateGroup /></ProtectedRoute>} />
+          <Route path="/groups/:groupId/edit" element={<ProtectedRoute><EditGroup /></ProtectedRoute>} />
 
-        {/* Expenses Routes */}
-        <Route path="/expenses" element={<ExpensesDashboard />} />
-        <Route path="/expenses/new" element={<AddExpense />} />
-        <Route path="/expenses/:expenseId/edit" element={<EditExpense />} />
+          {/* Chores Routes */}
+          <Route path="/chores" element={<ProtectedRoute><ChoresDashboard /></ProtectedRoute>} />
+          <Route path="/chores/add" element={<ProtectedRoute><AddChore /></ProtectedRoute>} />
+          <Route path="/chores/:choreId/edit" element={<ProtectedRoute><EditChore /></ProtectedRoute>} />
 
-        {/* Inventory Routes */}
-        <Route path="/:groupId/inventory" element={<GroupInventory />} />
-        <Route path="/:groupId/inventory/new" element={<AddItem />} />
-        <Route path="/:groupId/inventory/:itemId/edit" element={<EditItem />} />
+          {/* Expenses Routes */}
+          <Route path="/expenses" element={<ProtectedRoute><ExpensesDashboard /></ProtectedRoute>} />
+          <Route path="/expenses/new" element={<ProtectedRoute><AddExpense /></ProtectedRoute>} />
+          <Route path="/expenses/:expenseId/edit" element={<ProtectedRoute><EditExpense /></ProtectedRoute>} />
 
-        {/* Profile Routes */}
-        <Route path="/user-profile" element={<UserProfile />} />
+          {/* Inventory Routes */}
+          <Route path="/:groupId/inventory" element={<ProtectedRoute><GroupInventory /></ProtectedRoute>} />
+          <Route path="/:groupId/inventory/new" element={<ProtectedRoute><AddItem /></ProtectedRoute>} />
+          <Route path="/:groupId/inventory/:itemId/edit" element={<ProtectedRoute><EditItem /></ProtectedRoute>} />
+
+          {/* Profile Routes */}
+          <Route path="/user-profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
 
       </Routes>
     </Layout>
