@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { SlidersHorizontal, Users, AppWindow } from 'lucide-react';
+import { SlidersHorizontal, Users, AppWindow, CheckSquare, Square, CheckCircle, Circle } from 'lucide-react';
 
 const c2f = (c) => Math.round((c * 9) / 5 + 32);
 
@@ -161,8 +161,13 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
             ['Expenses', 'expenses'],
             ['Inventory', 'inventory'],
           ].map(([label, key]) => (
-            <label key={key} className="check">
-              <input type="checkbox" checked={components[key]} onChange={() => toggleComponent(key)} />
+            <label key={key} style={{display:'flex', alignItems:'center', gap:8, cursor:'pointer'}} onClick={() => toggleComponent(key)}>
+              {components[key] ? (
+                <CheckSquare size={18} color='#059669'/>
+              ) : (
+                  <Square size={18} color='#9ca3af'/>
+              )}
+
               <span>{label}</span>
             </label>
           ))}
@@ -214,23 +219,21 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
         {/* Guests */}
         <div style={{ display: 'grid', gap: 8 }}>
           <div className="item-sub">Guests</div>
-          <div style={{ display:'flex', gap:8 }}>
-            <label className="check">
-              <input
-                type="radio"
-                name="guests"
-                checked={guestsAllowed === true}
-                onChange={() => setGuestsAllowed(true)}
-              />
+          <div style={{ display: 'flex', gap: 16 }}>
+            <label onClick={() => setGuestsAllowed(true)} style={{display:'flex', alignItems:'center', gap:8, cursor:'pointer'}}>
+              {guestsAllowed === true ? (
+                <CheckCircle size={18} color="#059669" />
+              ) : (
+                  <Circle size={18} color="#9ca3af"/>
+              )}
               <span>Allowed</span>
             </label>
-            <label className="check">
-              <input
-                type="radio"
-                name="guests"
-                checked={guestsAllowed === false}
-                onChange={() => setGuestsAllowed(false)}
-              />
+              <label onClick={() => setGuestsAllowed(false)} style={{display:'flex', alignItems:'center', gap:8, cursor:'pointer'}}>
+              {guestsAllowed === false ? (
+                <CheckCircle size={18} color="#059669" />
+              ) : (
+                  <Circle size={18} color="#9ca3af"/>
+              )}
               <span>Not allowed</span>
             </label>
           </div>
@@ -239,23 +242,21 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
         {/* Smoking */}
         <div style={{ display: 'grid', gap: 8 }}>
           <div className="item-sub">Smoking</div>
-          <div style={{ display:'flex', gap:8 }}>
-            <label className="check">
-              <input
-                type="radio"
-                name="smoking"
-                checked={smokingAllowed === true}
-                onChange={() => setSmokingAllowed(true)}
-              />
+          <div style={{ display: 'flex', gap: 16 }}>
+            <label onClick={() => setSmokingAllowed(true)} style={{display:'flex', alignItems:'center', gap:8, cursor:'pointer'}}>
+              {smokingAllowed === true ? (
+                <CheckCircle size={18} color="#059669" />
+              ) : (
+                  <Circle size={18} color="#9ca3af"/>
+              )}
               <span>Allowed</span>
             </label>
-            <label className="check">
-              <input
-                type="radio"
-                name="smoking"
-                checked={smokingAllowed === false}
-                onChange={() => setSmokingAllowed(false)}
-              />
+              <label onClick={() => setSmokingAllowed(false)} style={{display:'flex', alignItems:'center', gap:8, cursor:'pointer'}}>
+              {smokingAllowed === false ? (
+                <CheckCircle size={18} color="#059669" />
+              ) : (
+                  <Circle size={18} color="#9ca3af"/>
+              )}
               <span>Not allowed</span>
             </label>
           </div>
@@ -264,23 +265,21 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
         {/* Drinking */}
         <div style={{ display: 'grid', gap: 8 }}>
           <div className="item-sub">Drinking</div>
-          <div style={{ display:'flex', gap:8 }}>
-            <label className="check">
-              <input
-                type="radio"
-                name="drinking"
-                checked={drinkingAllowed === true}
-                onChange={() => setDrinkingAllowed(true)}
-              />
+          <div style={{ display: 'flex', gap: 16 }}>
+            <label onClick={() => setDrinkingAllowed(true)} style={{display:'flex', alignItems:'center', gap:8, cursor:'pointer'}}>
+              {drinkingAllowed === true ? (
+                <CheckCircle size={18} color="#059669" />
+              ) : (
+                  <Circle size={18} color="#9ca3af"/>
+              )}
               <span>Allowed</span>
             </label>
-            <label className="check">
-              <input
-                type="radio"
-                name="drinking"
-                checked={drinkingAllowed === false}
-                onChange={() => setDrinkingAllowed(false)}
-              />
+              <label onClick={() => setDrinkingAllowed(false)} style={{display:'flex', alignItems:'center', gap:8, cursor:'pointer'}}>
+              {drinkingAllowed === false ? (
+                <CheckCircle size={18} color="#059669" />
+              ) : (
+                  <Circle size={18} color="#9ca3af"/>
+              )}
               <span>Not allowed</span>
             </label>
           </div>
@@ -289,48 +288,44 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
       {/* Parties */}
         <div style={{ display: 'grid', gap: 8 }}>
           <div className="item-sub">Parties</div>
-          <div style={{ display:'flex', gap:8 }}>
-            <label className="check">
-              <input
-                type="radio"
-                name="parties"
-                checked={partiesAllowed === true}
-                onChange={() => setPartiesAllowed(true)}
-              />
+          <div style={{ display: 'flex', gap: 16 }}>
+            <label onClick={() => setPartiesAllowed(true)} style={{display:'flex', alignItems:'center', gap:8, cursor:'pointer'}}>
+              {partiesAllowed === true ? (
+                <CheckCircle size={18} color="#059669" />
+              ) : (
+                  <Circle size={18} color="#9ca3af"/>
+              )}
               <span>Allowed</span>
             </label>
-            <label className="check">
-              <input
-                type="radio"
-                name="parties"
-                checked={partiesAllowed === false}
-                onChange={() => setPartiesAllowed(false)}
-              />
+              <label onClick={() => setPartiesAllowed(false)} style={{display:'flex', alignItems:'center', gap:8, cursor:'pointer'}}>
+              {partiesAllowed === false ? (
+                <CheckCircle size={18} color="#059669" />
+              ) : (
+                  <Circle size={18} color="#9ca3af"/>
+              )}
               <span>Not allowed</span>
             </label>
           </div>
-      </div>
+        </div>
       
       {/* Night Time Guests */}
         <div style={{ display: 'grid', gap: 8 }}>
-          <div className="item-sub">Night Time Guests</div>
-          <div style={{ display:'flex', gap:8 }}>
-            <label className="check">
-              <input
-                type="radio"
-                name="nightTimeGuests"
-                checked={nightTimeGuestsAllowed === true}
-                onChange={() => setNightTimeGuestsAllowed(true)}
-              />
+          <div className="item-sub">Night Guests</div>
+          <div style={{ display: 'flex', gap: 16 }}>
+            <label onClick={() => setNightTimeGuestsAllowed(true)} style={{display:'flex', alignItems:'center', gap:8, cursor:'pointer'}}>
+              {nightTimeGuestsAllowed === true ? (
+                <CheckCircle size={18} color="#059669" />
+              ) : (
+                  <Circle size={18} color="#9ca3af"/>
+              )}
               <span>Allowed</span>
             </label>
-            <label className="check">
-              <input
-                type="radio"
-                name="nightTimeGuests"
-                checked={nightTimeGuestsAllowed === false}
-                onChange={() => setNightTimeGuestsAllowed(false)}
-              />
+              <label onClick={() => setNightTimeGuestsAllowed(false)} style={{display:'flex', alignItems:'center', gap:8, cursor:'pointer'}}>
+              {nightTimeGuestsAllowed === false ? (
+                <CheckCircle size={18} color="#059669" />
+              ) : (
+                  <Circle size={18} color="#9ca3af"/>
+              )}
               <span>Not allowed</span>
             </label>
           </div>
@@ -339,32 +334,29 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
       {/* Accommodations */}
         <div style={{ display: 'grid', gap: 8 }}>
           <div className="item-sub">Accommodations</div>
-          <div style={{ display:'flex', gap:8 }}>
-            <label className="check">
-              <input
-                type="radio"
-                name="accommodationsCheck"
-                checked={accommodationsTrue === true}
-              onChange={(e) => {
-                setAccommodationsTrue(true);
-                }}
-              />
+          <div style={{ display: 'flex', gap: 16 }}>
+            <label onClick={() => setAccommodationsTrue(true)} style={{display:'flex', alignItems:'center', gap:8, cursor:'pointer'}}>
+                {accommodationsTrue === true ? (
+                <CheckCircle size={18} color="#059669" />
+              ) : (
+                  <Circle size={18} color="#9ca3af"/>
+              )}
+
               <span>Accommodations</span>
             </label>
 
-            <label className="check">
-              <input
-                type="radio"
-                name="accommodationsCheck"
-                checked={accommodationsTrue === false}
-                onChange={() => {
-                  setAccommodationsTrue(false)
-                  setAccommodations('None')
-                }}
-              />
+            <label onClick={() => setAccommodationsTrue(false)} style={{display:'flex', alignItems:'center', gap:8, cursor:'pointer'}}>
+                {accommodationsTrue === false ? (
+                <CheckCircle size={18} color="#059669" />
+              ) : (
+                  <Circle size={18} color="#9ca3af"/>
+              )}
+
               <span>No Accommodations</span>
             </label>
-          {accommodationsTrue && (
+            </div>
+
+            {accommodationsTrue && (
             <input
               type="text"
               placeholder='Enter accommodations'
@@ -373,7 +365,6 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
               style={{ padding: 6 }}
             />
           )}
-          </div>
         </div>
 
         </section>
