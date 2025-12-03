@@ -71,7 +71,7 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
   );
 
   const [accommodationsTrue, setAccommodationsTrue] = useState(false);
-  const [accommodations, setAccommodations] = useState(false);
+  const [accommodations, setAccommodations] = useState("None");
 
 
   async function handleSubmit(e) {
@@ -86,6 +86,11 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
       preferences: {
         temperatureF: temperatureF === '' ? null : Number(temperatureF),
         guestsAllowed,
+        smokingAllowed,
+        drinkingAllowed,
+        partiesAllowed,
+        nightTimeGuestsAllowed,
+        accommodations: accommodations === '' ? 'None' : accommodations
       },
     };
     await onSubmit?.(payload);

@@ -69,7 +69,12 @@ export default function EditGroup() {
     },
     preferences: {
       temperatureF: group.prefs?.temperatureF,
-      guestsAllowed: group.prefs?.guestsAllowed
+      guestsAllowed: group.prefs?.guestsAllowed,
+      smokingAllowed: group.prefs?.smokingAllowed,
+      drinkingAllowed: group.prefs?.drinkingAllowed,
+      partiesAllowed: group.prefs?.partiesAllowed,
+      nightTimeGuestsAllowed: group.prefs?.nightTimeGuestsAllowed,
+      accommodations: group.prefs?.accommodations
     }
   };
 

@@ -268,7 +268,7 @@ router.put('/groups/:id/prefs', async (req, res) => {
     if (drinkingAllowed !== undefined) group.prefs.drinkingAllowed = drinkingAllowed;
     if (partiesAllowed !== undefined) group.prefs.partiesAllowed = partiesAllowed;
     if (nightTimeGuestsAllowed !== undefined) group.prefs.nightTimeGuestsAllowed = nightTimeGuestsAllowed;
-    if (accomodations !== undefined) group.prefs.accommodations = accommodations;
+    if (accommodations !== undefined) group.prefs.accommodations = accommodations;
 
     await group.save();
     res.json(group.prefs);

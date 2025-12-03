@@ -72,6 +72,11 @@ export default function Dashboard() {
 
   const tempF = group?.prefs?.temperatureF ?? data?.prefs?.temperatureF;
   const guests = group?.prefs?.guestsAllowed ?? data?.prefs?.guestsAllowed;
+  const smoking = group?.prefs?.smokingAllowed ?? data?.prefs?.smokingAllowed;
+  const drinking = group?.prefs?.drinkingAllowed ?? data?.prefs?.drinkingAllowed;
+  const parties = group?.prefs?.partiesAllowed ?? data?.prefs?.partiesAllowed;
+  const nightTimeGuests = group?.prefs?.nightTimeGuestsAllowed ?? data?.prefs?.nightTimeGuestsAllowed;
+  const accomm = group?.prefs?.accommodationsAllowed ?? data?.prefs?.accommodationsAllowed;
 
   // Roommates
   const roommates = Array.isArray(group?.roommates) ? group.roommates : [];
@@ -137,6 +142,21 @@ export default function Dashboard() {
           <div className="item-sub">Guests</div>
           <div style={{ fontWeight: 800 }}>
             {guests === true ? 'Allowed' : guests === false ? 'Not allowed' : '—'}
+          </div>
+          <div style={{ fontWeight: 800 }}>
+            {smoking === true ? 'Allowed' : smoking === false ? 'Not allowed' : '—'}
+          </div>
+          <div style={{ fontWeight: 800 }}>
+            {drinking === true ? 'Allowed' : drinking === false ? 'Not allowed' : '—'}
+          </div>
+          <div style={{ fontWeight: 800 }}>
+            {parties === true ? 'Allowed' : parties === false ? 'Not allowed' : '—'}
+          </div>
+          <div style={{ fontWeight: 800 }}>
+            {nightTimeGuests === true ? 'Allowed' : nightTimeGuests === false ? 'Not allowed' : '—'}
+          </div>
+          <div style={{ fontWeight: 800 }}>
+            {accomm === 'None' || accomm === '' ? 'None' : accomm}
           </div>
           <button className="btn btn-ghost" onClick={() => nav(`/groups/${activeGroupId}/edit?tab=prefs`)}>
             EDIT PREFERENCES
