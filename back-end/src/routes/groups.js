@@ -66,7 +66,12 @@ router.post('/groups', validateCreateGroup, optionalAuth, async (req, res) => {
       quietStart: quietHours?.start || '22:00',
       quietEnd: quietHours?.end || '06:00',
       temperatureF: preferences?.temperatureF ?? 72,
-      guestsAllowed: preferences?.guestsAllowed ?? true
+      guestsAllowed: preferences?.guestsAllowed ?? true,
+      smokingAllowed: preferences?.smokingAllowed ?? false,
+      drinkingAllowed: preferences?.drinkingAllowed ?? false,
+      partiesAllowed: preferences?.partiesAllowed ?? false,
+      nightTimeGuestsAllowed: preferences?.nightTimeGuestsAllowed ?? false,
+      accommodations: preferences?.accommodations ?? 'None'
     };
 
     const group = new Group({
@@ -145,6 +150,11 @@ router.put('/groups/:id', validateUpdateGroup, async (req, res) => {
     if (preferences) {
       if (preferences.temperatureF !== undefined) group.prefs.temperatureF = preferences.temperatureF;
       if (preferences.guestsAllowed !== undefined) group.prefs.guestsAllowed = preferences.guestsAllowed;
+      if (preferences.smokingAllowed !== undefined) group.prefs.smokingAllowed = preferences.smokingAllowed;
+      if (preferences.drinkingAllowed !== undefined) group.prefs.drinkingAllowed = preferences.drinkingAllowed;
+      if (preferences.partiesAllowed !== undefined) group.prefs.partiesAllowed = preferences.partiesAllowed;
+      if (preferences.nightTimeGuestsAllowed !== undefined) group.prefs.nightTimeGuestsAllowed = preferences.nightTimeGuestsAllowed;
+      if (preferences.accommodations !== undefined) group.prefs.accommodations = preferences.accommodations;
     }
 
     // Update quiet hours
@@ -248,12 +258,17 @@ router.put('/groups/:id/prefs', async (req, res) => {
       return res.status(404).json({ error: 'Group not found' });
     }
 
-    const { quietStart, quietEnd, temperatureF, guestsAllowed } = req.body;
+    const { quietStart, quietEnd, temperatureF, guestsAllowed, smokingAllowed, drinkingAllowed, partiesAllowed, nightTimeGuestsAllowed, accommodations} = req.body;
 
     if (quietStart !== undefined) group.prefs.quietStart = quietStart;
     if (quietEnd !== undefined) group.prefs.quietEnd = quietEnd;
     if (temperatureF !== undefined) group.prefs.temperatureF = temperatureF;
     if (guestsAllowed !== undefined) group.prefs.guestsAllowed = guestsAllowed;
+    if (smokingAllowed !== undefined) group.prefs.smokingAllowed = smokingAllowed;
+    if (drinkingAllowed !== undefined) group.prefs.drinkingAllowed = drinkingAllowed;
+    if (partiesAllowed !== undefined) group.prefs.partiesAllowed = partiesAllowed;
+    if (nightTimeGuestsAllowed !== undefined) group.prefs.nightTimeGuestsAllowed = nightTimeGuestsAllowed;
+    if (accommodations !== undefined) group.prefs.accommodations = accommodations;
 
     await group.save();
     res.json(group.prefs);

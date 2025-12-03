@@ -19,12 +19,12 @@ describe('Groups API (Cyryl)', () => {
         roommates: ['alice@x.com', 'bob@x.com'],
         components: ['chores', 'inventory'],
         quietHours: { start: '23:00', end: '07:00' },
-        preferences: { temperatureF: 70, guestsAllowed: false }
+        preferences: { temperatureF: 70, guestsAllowed: false, smokingAllowed: false, drinkingAllowed: false, partiesAllowed: false, nightTimeGuestsAllowed: false, accommodations: 'None' }
       });
 
     expect(res.status).to.equal(201);
     expect(res.body).to.include.keys('_id', 'name', 'prefs', 'roommates', 'components');
-    expect(res.body.prefs).to.include({ quietStart: '23:00', quietEnd: '07:00', temperatureF: 70, guestsAllowed: false });
+    expect(res.body.prefs).to.include({ quietStart: '23:00', quietEnd: '07:00', temperatureF: 70, guestsAllowed: false, smokingAllowed: false, drinkingAllowed: false, partiesAllowed: false, nightTimeGuestsAllowed: false, accommodations: 'None' });
     expect(res.body.components).to.deep.equal({ chores: true, expenses: false, inventory: true });
     
     createdGroupId = res.body._id;
@@ -58,13 +58,18 @@ describe('Groups API (Cyryl)', () => {
       .send({
         name: 'Renamed House',
         quietHours: { start: '21:30' },
-        preferences: { temperatureF: 71 }
+        preferences: { temperatureF: 71, smokingAllowed: true, drinkingAllowed: true, partiesAllowed: true, nightTimeGuestsAllowed: true, accommodations: 'None'}, 
       });
 
     expect(res.status).to.equal(200);
     expect(res.body.name).to.equal('Renamed House');
     expect(res.body.prefs.quietStart).to.equal('21:30');
     expect(res.body.prefs.temperatureF).to.equal(71);
+    expect(res.body.prefs.smokingAllowed).to.equal(true);
+    expect(res.body.prefs.drinkingAllowed).to.equal(true);
+    expect(res.body.prefs.partiesAllowed).to.equal(true);
+    expect(res.body.prefs.nightTimeGuestsAllowed).to.equal(true);
+    expect(res.body.prefs.accommodations).to.equal('None');
   });
 
   it('GET /api/groups/:id/dashboard → aggregate shape', async () => {
