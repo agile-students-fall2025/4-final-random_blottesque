@@ -90,7 +90,7 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
         drinkingAllowed,
         partiesAllowed,
         nightTimeGuestsAllowed,
-        accommodations: accommodations === '' ? 'None' : accommodations
+        accommodations: accommodations === 'None' || accommodations === '' ? 'None' : accommodations
       },
     };
     await onSubmit?.(payload);
@@ -285,7 +285,6 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
             </label>
           </div>
         </div>
-      </section>
 
       {/* Parties */}
         <div style={{ display: 'grid', gap: 8 }}>
@@ -345,15 +344,26 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
               <input
                 type="radio"
                 name="accommodationsCheck"
-                checked={accommodationsTrue}
+                checked={accommodationsTrue === true}
               onChange={(e) => {
-                const checked = e.target.checked;
-                setAccommodationsTrue(checked);
-                if (!checked) setAccommodations('None');
+                setAccommodationsTrue(true);
                 }}
               />
-              <span>Accommodations Needed?</span>
-          </label>
+              <span>Accommodations</span>
+            </label>
+
+            <label className="check">
+              <input
+                type="radio"
+                name="accommodationsCheck"
+                checked={accommodationsTrue === false}
+                onChange={() => {
+                  setAccommodationsTrue(false)
+                  setAccommodations('None')
+                }}
+              />
+              <span>No Accommodations</span>
+            </label>
           {accommodationsTrue && (
             <input
               type="text"
@@ -365,6 +375,8 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
           )}
           </div>
         </div>
+
+        </section>
 
       <button className="btn btn-primary btn-full">{submitLabel}</button>
     </form>
