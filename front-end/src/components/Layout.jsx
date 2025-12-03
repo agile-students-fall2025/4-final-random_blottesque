@@ -31,8 +31,13 @@ export default function Layout({ children }) {
       <nav className="bottombar">
         <div className="bottombar-inner">
           <Tab to="/dashboard" icon={<Home size={18}/>} label="Dashboard" />
-          <Tab to="/groups/new" icon={<PlusCircle size={18}/>} label="New Group" />
-          <Tab to={`/groups/${activeGroupId || ''}/edit`} icon={<Settings size={18}/>} label="Edit Group" />
+          <Tab to="/groups/new" icon={<PlusCircle size={18} />} label="New Group" />
+          
+          <Tab
+            to={activeGroupId ? `/groups/${activeGroupId}/edit` : "/groups/edit"}
+            icon={<Settings size={18} />}
+            label="Edit Group"
+          />
         </div>
       </nav>
     </div>

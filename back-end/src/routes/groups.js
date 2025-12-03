@@ -19,7 +19,7 @@ const router = Router();
  * GET /api/groups
  * List all groups (optionally filtered by user)
  */
-router.get('/groups', optionalAuth, async (req, res) => {
+router.get('/groups', authenticate, async (req, res) => {
   try {
     let query = {};
     
@@ -45,7 +45,7 @@ router.get('/groups', optionalAuth, async (req, res) => {
  * POST /api/groups
  * Create a new group
  */
-router.post('/groups', validateCreateGroup, optionalAuth, async (req, res) => {
+router.post('/groups', validateCreateGroup, authenticate, async (req, res) => {
   try {
     const { name, description, roommates, components, preferences, quietHours, inviteCode } = req.body;
 
@@ -97,7 +97,7 @@ router.post('/groups', validateCreateGroup, optionalAuth, async (req, res) => {
  * GET /api/groups/:id
  * Get group by ID
  */
-router.get('/groups/:id', async (req, res) => {
+router.get('/groups/:id', authenticate, async (req, res) => {
   try {
     const group = await Group.findById(req.params.id);
     
@@ -119,7 +119,7 @@ router.get('/groups/:id', async (req, res) => {
  * PUT /api/groups/:id
  * Update group
  */
-router.put('/groups/:id', validateUpdateGroup, async (req, res) => {
+router.put('/groups/:id', authenticate, validateUpdateGroup, async (req, res) => {
   try {
     const group = await Group.findById(req.params.id);
     
@@ -178,7 +178,7 @@ router.put('/groups/:id', validateUpdateGroup, async (req, res) => {
  * DELETE /api/groups/:id
  * Delete group
  */
-router.delete('/groups/:id', async (req, res) => {
+router.delete('/groups/:id', authenticate, async (req, res) => {
   try {
     const group = await Group.findByIdAndDelete(req.params.id);
     
@@ -197,7 +197,7 @@ router.delete('/groups/:id', async (req, res) => {
  * GET /api/groups/:id/dashboard
  * Get dashboard aggregate data
  */
-router.get('/groups/:id/dashboard', async (req, res) => {
+router.get('/groups/:id/dashboard', authenticate, async (req, res) => {
   try {
     const group = await Group.findById(req.params.id);
     
@@ -228,7 +228,7 @@ router.get('/groups/:id/dashboard', async (req, res) => {
  * GET /api/groups/:id/prefs
  * Get group preferences
  */
-router.get('/groups/:id/prefs', async (req, res) => {
+router.get('/groups/:id/prefs', authenticate, async (req, res) => {
   try {
     const group = await Group.findById(req.params.id);
     
@@ -250,7 +250,7 @@ router.get('/groups/:id/prefs', async (req, res) => {
  * PUT /api/groups/:id/prefs
  * Update group preferences
  */
-router.put('/groups/:id/prefs', async (req, res) => {
+router.put('/groups/:id/prefs', authenticate, async (req, res) => {
   try {
     const group = await Group.findById(req.params.id);
     
@@ -284,7 +284,7 @@ router.put('/groups/:id/prefs', async (req, res) => {
  * GET /api/groups/:id/chores
  * Get all chores for a group
  */
-router.get('/groups/:id/chores', async (req, res) => {
+router.get('/groups/:id/chores', authenticate, async (req, res) => {
   try {
     const group = await Group.findById(req.params.id);
     
@@ -306,7 +306,7 @@ router.get('/groups/:id/chores', async (req, res) => {
  * POST /api/groups/:id/chores
  * Add a new chore
  */
-router.post('/groups/:id/chores', validateCreateChore, async (req, res) => {
+router.post('/groups/:id/chores', authenticate, validateCreateChore, async (req, res) => {
   try {
     const group = await Group.findById(req.params.id);
     
@@ -341,7 +341,7 @@ router.post('/groups/:id/chores', validateCreateChore, async (req, res) => {
  * PUT /api/groups/:id/chores/:cid
  * Update a chore
  */
-router.put('/groups/:id/chores/:cid', validateUpdateChore, async (req, res) => {
+router.put('/groups/:id/chores/:cid', authenticate, validateUpdateChore, async (req, res) => {
   try {
     const group = await Group.findById(req.params.id);
     
@@ -378,7 +378,7 @@ router.put('/groups/:id/chores/:cid', validateUpdateChore, async (req, res) => {
  * DELETE /api/groups/:gid/chores/:cid
  * Delete a chore
  */
-router.delete('/groups/:gid/chores/:cid', async (req, res) => {
+router.delete('/groups/:gid/chores/:cid', authenticate, async (req, res) => {
   try {
     const group = await Group.findById(req.params.gid);
     
@@ -408,7 +408,7 @@ router.delete('/groups/:gid/chores/:cid', async (req, res) => {
  * GET /api/groups/:id/expenses
  * Get all expenses for a group
  */
-router.get('/groups/:id/expenses', async (req, res) => {
+router.get('/groups/:id/expenses', authenticate, async (req, res) => {
   try {
     const group = await Group.findById(req.params.id);
     
@@ -430,7 +430,7 @@ router.get('/groups/:id/expenses', async (req, res) => {
  * POST /api/groups/:id/expenses
  * Add a new expense
  */
-router.post('/groups/:id/expenses', validateCreateExpense, async (req, res) => {
+router.post('/groups/:id/expenses', authenticate, validateCreateExpense, async (req, res) => {
   try {
     const group = await Group.findById(req.params.id);
     
@@ -463,7 +463,7 @@ router.post('/groups/:id/expenses', validateCreateExpense, async (req, res) => {
  * PUT /api/groups/:id/expenses/:eid
  * Update an expense
  */
-router.put('/groups/:id/expenses/:eid', async (req, res) => {
+router.put('/groups/:id/expenses/:eid', authenticate, async (req, res) => {
   try {
     const group = await Group.findById(req.params.id);
     
@@ -498,7 +498,7 @@ router.put('/groups/:id/expenses/:eid', async (req, res) => {
  * DELETE /api/groups/:gid/expenses/:eid
  * Delete an expense
  */
-router.delete('/groups/:gid/expenses/:eid', async (req, res) => {
+router.delete('/groups/:gid/expenses/:eid', authenticate, async (req, res) => {
   try {
     const group = await Group.findById(req.params.gid);
     
@@ -528,7 +528,7 @@ router.delete('/groups/:gid/expenses/:eid', async (req, res) => {
  * GET /api/groups/:id/inventory
  * Get all inventory items for a group
  */
-router.get('/groups/:id/inventory', async (req, res) => {
+router.get('/groups/:id/inventory', authenticate, async (req, res) => {
   try {
     const group = await Group.findById(req.params.id);
     
@@ -550,7 +550,7 @@ router.get('/groups/:id/inventory', async (req, res) => {
  * POST /api/groups/:id/inventory
  * Add a new inventory item
  */
-router.post('/groups/:id/inventory', validateCreateInventoryItem, async (req, res) => {
+router.post('/groups/:id/inventory', authenticate, validateCreateInventoryItem, async (req, res) => {
   try {
     const group = await Group.findById(req.params.id);
     
@@ -581,7 +581,7 @@ router.post('/groups/:id/inventory', validateCreateInventoryItem, async (req, re
  * PUT /api/groups/:id/inventory/:iid
  * Update an inventory item
  */
-router.put('/groups/:id/inventory/:iid', async (req, res) => {
+router.put('/groups/:id/inventory/:iid', authenticate, async (req, res) => {
   try {
     const group = await Group.findById(req.params.id);
     
@@ -615,7 +615,7 @@ router.put('/groups/:id/inventory/:iid', async (req, res) => {
  * DELETE /api/groups/:gid/inventory/:iid
  * Delete an inventory item
  */
-router.delete('/groups/:gid/inventory/:iid', async (req, res) => {
+router.delete('/groups/:gid/inventory/:iid', authenticate, async (req, res) => {
   try {
     const group = await Group.findById(req.params.gid);
     

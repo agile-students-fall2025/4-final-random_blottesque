@@ -37,6 +37,7 @@ export default function App() {
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/groups/new" element={<ProtectedRoute><CreateGroup /></ProtectedRoute>} />
           <Route path="/groups/:groupId/edit" element={<ProtectedRoute><EditGroup /></ProtectedRoute>} />
+          <Route path="/groups/edit" element={<ProtectedRoute><EditGroup /></ProtectedRoute>} />
 
           {/* Chores Routes */}
           <Route path="/chores" element={<ProtectedRoute><ChoresDashboard /></ProtectedRoute>} />
