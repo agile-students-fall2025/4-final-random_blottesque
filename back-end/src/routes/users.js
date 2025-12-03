@@ -34,7 +34,7 @@ router.get('/users/:id', async (req, res) => {
  * Body: { name?, phone?, photoUrl? }
  * Returns: updated user object
  */
-router.put('/users/:id', validateUpdateUser, async (req, res) => {
+router.put('/users/:id', authenticate, validateUpdateUser, async (req, res) => {
   try {
     const { name, phone, photoUrl } = req.body;
     
