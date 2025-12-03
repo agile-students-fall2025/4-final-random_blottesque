@@ -1,110 +1,136 @@
-import { Router } from 'express';
+import express from 'express';
 import User from '../models/User.js';
+import { validateSignup, validateLogin, handleValidationErrors } from '../middleware/validators.js';
 import { generateToken, authenticate } from '../middleware/auth.js';
-import { validateSignup, validateLogin } from '../middleware/validators.js';
 
-const router = Router();
+const router = express.Router();
 
-/**
- * POST /api/signup
- * Register a new user
- * Body: { email, password, name? }
- * Returns: { token, user }
- */
-router.post('/signup', validateSignup, async (req, res) => {
+// SIGNUP ROUTE
+router.post('/auth/signup', validateSignup, handleValidationErrors, async (req, res) => {
   try {
     const { email, password, name } = req.body;
 
     // Check if user already exists
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
+    const existingUser = await User.findOne({ email });
+
     if (existingUser) {
-      return res.status(409).json({ error: 'Email already registered' });
+      return res.status(400).json({ 
+        success: false,
+        message: 'Email already registered' 
+      });
     }
 
     // Create new user
-    const user = new User({
-      email,
-      password,
-      name: name || email.split('@')[0]
-    });
+    const userData = { email, password };
+    if (name && name.trim()) {
+      userData.name = name;
+    }
 
+    const user = new User(userData);
     await user.save();
 
-    // Generate token
+    // Generate JWT token
     const token = generateToken(user._id);
 
+    // Send response
     res.status(201).json({
+      success: true,
+      message: 'User registered successfully',
       token,
-      user: user.toJSON()
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        phone: user.phone,
+        photoUrl: user.photoUrl,
+        createdAt: user.createdAt
+      }
     });
+
   } catch (error) {
     console.error('Signup error:', error);
+    
     if (error.code === 11000) {
-      return res.status(409).json({ error: 'Email already registered' });
+      return res.status(400).json({ 
+        success: false,
+        message: 'Email already registered' 
+      });
     }
-    res.status(500).json({ error: 'Failed to create account' });
+
+    res.status(500).json({ 
+      success: false,
+      message: 'Server error during registration',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 });
 
-/**
- * POST /api/login
- * Authenticate user and return token
- * Body: { email, password }
- * Returns: { token, user }
- */
-router.post('/login', validateLogin, async (req, res) => {
+// LOGIN ROUTE
+router.post('/auth/login', validateLogin, handleValidationErrors, async (req, res) => {
   try {
     const { email, password } = req.body;
 
     // Find user by email
-    const user = await User.findOne({ email: email.toLowerCase() });
+    const user = await User.findOne({ email });
+
     if (!user) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ 
+        success: false,
+        message: 'Invalid email or password' 
+      });
     }
 
     // Check password
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+    const isPasswordValid = await user.comparePassword(password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ 
+        success: false,
+        message: 'Invalid email or password' 
+      });
     }
 
-    // Generate token
+    // Generate JWT token
     const token = generateToken(user._id);
 
+    // Send response
     res.json({
+      success: true,
+      message: 'Login successful',
       token,
-      user: user.toJSON()
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        phone: user.phone,
+        photoUrl: user.photoUrl
+      }
     });
+
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ error: 'Login failed' });
+    res.status(500).json({ 
+      success: false,
+      message: 'Server error during login',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 });
 
-/**
- * GET /api/me
- * Get current authenticated user
- * Requires: Bearer token
- * Returns: user object
- */
-router.get('/me', authenticate, async (req, res) => {
-  try {
-    res.json(req.user);
-  } catch (error) {
-    console.error('Get user error:', error);
-    res.status(500).json({ error: 'Failed to get user data' });
-  }
+// GET CURRENT USER (Protected route)
+router.get('/auth/me', authenticate, async (req, res) => {
+  res.json({
+    success: true,
+    user: req.user
+  });
 });
 
-/**
- * POST /api/logout
- * Logout user (client-side token removal)
- * Returns: { ok: true }
- */
-router.post('/logout', (req, res) => {
-  // JWT tokens are stateless, so logout is handled client-side
-  // This endpoint is for API completeness
-  res.json({ ok: true, message: 'Logged out successfully' });
+// LOGOUT
+router.post('/auth/logout', authenticate, async (req, res) => {
+  res.json({
+    success: true,
+    message: 'Logged out successfully'
+  });
 });
 
 export default router;

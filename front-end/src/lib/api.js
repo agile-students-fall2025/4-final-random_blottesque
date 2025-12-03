@@ -55,7 +55,7 @@ const apiRequest = async (endpoint, options = {}) => {
 // ==================== AUTH API ====================
 
 export const signup = async (email, password, name) => {
-  const data = await apiRequest('/signup', {
+  const data = await apiRequest('/auth/signup', {
     method: 'POST',
     body: JSON.stringify({ email, password, name }),
   });
@@ -69,7 +69,7 @@ export const signup = async (email, password, name) => {
 };
 
 export const login = async (email, password) => {
-  const data = await apiRequest('/login', {
+  const data = await apiRequest('/auth/login', {
     method: 'POST',
     body: JSON.stringify({ email, password }),
   });
@@ -88,7 +88,7 @@ export const logout = () => {
 };
 
 export const getCurrentUser = async () => {
-  return apiRequest('/me');
+  return apiRequest('auth/me');
 };
 
 export const getStoredUser = () => {
