@@ -98,6 +98,11 @@ const groupSchema = new mongoose.Schema({
     trim: true,
     default: ''
   },
+  photoUrl: {
+    type: String,
+    trim: true,
+    default: null
+  },
   inviteCode: {
     type: String,
     uppercase: true,
@@ -117,12 +122,7 @@ const groupSchema = new mongoose.Schema({
     quietStart: { type: String, default: '22:00' },
     quietEnd: { type: String, default: '06:00' },
     temperatureF: { type: Number, default: 72 },
-    guestsAllowed: { type: Boolean, default: true },
-    smokingAllowed: { type: Boolean, default: true },
-    drinkingAllowed: { type: Boolean, default: true },
-    partiesAllowed: { type: Boolean, default: true },
-    nightTimeGuestsAllowed: { type: Boolean, default: true },
-    accommodations: { type: String, default: 'None' },
+    guestsAllowed: { type: Boolean, default: true }
   },
   chores: [choreSchema],
   expenses: [expenseSchema],

@@ -1,25 +1,34 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import GroupForm from '../components/GroupForm';
+import ImageUpload from '../components/ImageUpload';
 import { useApp } from '../context/AppContext';
-import { Image as ImageIcon, Users, FileText } from 'lucide-react';
+import { Users, FileText, Home } from 'lucide-react';
 import * as api from '../lib/api';
 
 export default function EditGroup() {
   const { groupId } = useParams();
   const nav = useNavigate();
-  const { updateGroup } = useApp();
+  const { updateGroup, activeGroupId, refreshGroups } = useApp();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [group, setGroup] = useState(null);
   const [error, setError] = useState('');
 
+  // Use groupId from params or fallback to activeGroupId
+  const currentGroupId = groupId || activeGroupId;
+
   useEffect(() => {
     let mounted = true;
     
     const loadGroup = async () => {
+      if (!currentGroupId) {
+        setLoading(false);
+        return;
+      }
+      
       try {
-        const g = await api.getGroup(groupId);
+        const g = await api.getGroup(currentGroupId);
         if (mounted) {
           setGroup(g);
           setLoading(false);
@@ -34,18 +43,32 @@ export default function EditGroup() {
 
     loadGroup();
     return () => { mounted = false; };
-  }, [groupId]);
+  }, [currentGroupId]);
+
+  const handleImageUploadSuccess = async (data) => {
+    if (data.group) {
+      setGroup(data.group);
+      // Refresh groups list to update sidebar
+      await refreshGroups?.();
+    }
+  };
 
   if (loading) return <p className="item-sub">Loading…</p>;
-  if (!group) return <p className="item-sub">Group not found.</p>;
+  if (!group) return (
+    <div className="card" style={{ textAlign: 'center', padding: 24 }}>
+      <p>No group selected.</p>
+      <button className="btn btn-primary" onClick={() => nav('/groups/new')}>
+        Create a Group
+      </button>
+    </div>
+  );
 
   async function handleSubmit(form) {
     setError('');
     setSaving(true);
     
     try {
-      await updateGroup(groupId, form);
-      // Show success feedback
+      await updateGroup(currentGroupId, form);
       alert('Group saved successfully!');
       nav('/dashboard');
     } catch (err) {
@@ -96,6 +119,26 @@ export default function EditGroup() {
         </div>
       )}
 
+      {/* Group Picture Section */}
+      <section className="card" style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center',
+        padding: 20,
+        marginBottom: 12 
+      }}>
+        <h3 className="section-title" style={{ marginTop: 0 }}>Group Picture</h3>
+        
+        <ImageUpload
+          type="group"
+          id={currentGroupId}
+          currentImage={group.photoUrl}
+          onUploadSuccess={handleImageUploadSuccess}
+          size="lg"
+          placeholder={<Home size={48} color="var(--indigo-600)" />}
+        />
+      </section>
+
       {/* Invite Code Display */}
       {group.inviteCode && (
         <div className="card" style={{ marginBottom: 12 }}>
@@ -116,12 +159,6 @@ export default function EditGroup() {
 
       {/* Quick actions */}
       <div style={{ display: 'grid', gap: 12, marginBottom: 12 }}>
-        <QuickTile
-          icon={<ImageIcon size={18} />}
-          title="Edit Group Pic"
-          subtitle="Placeholder – add photos next sprint"
-          onClick={() => alert('Photo upload coming in a future sprint!')}
-        />
         <QuickTile
           icon={<Users size={18} />}
           title="Edit Members List"

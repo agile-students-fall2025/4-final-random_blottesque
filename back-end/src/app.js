@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import groupsRouter from './routes/groups.js';
 import authRouter from './routes/auth.js';
 import usersRouter from './routes/users.js';
+import uploadsRouter from './routes/uploads.js';
 
 const app = express();
 
@@ -32,10 +33,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
+// Serve uploaded files
+app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+
 // API routes
 app.use('/api', authRouter);
 app.use('/api', usersRouter);
 app.use('/api', groupsRouter);
+app.use('/api', uploadsRouter);
 
 // 404 handler
 app.use('/api/*', (req, res) => {
