@@ -3,6 +3,12 @@
 ## Product Vision Statement
 Roomier is a mobile web application designed to make shared living smoother, fairer, and less stressful by providing a centralized platform for roommates to coordinate chores, split expenses, track shared inventory, and maintain a harmonious living environment.
 
+## 🌐 Live Demo
+- **Frontend:** [http://167.71.253.133:3000](http://167.71.253.133:3000)
+- **API:** [http://167.71.253.133:4000/api](http://167.71.253.133:4000/api)
+
+> Hosted on Digital Ocean Droplet: `ubuntu-s-1vcpu-1gb-nyc3-01`
+
 ## Core Team Members
 - [Lina Sanchez](https://github.com/linahsan)
 - [Luna Suzuki](https://github.com/lunasuzuki)
@@ -35,11 +41,12 @@ Living with roommates comes with everyday challenges that create unnecessary fri
 ### 🔐 Authentication
 - User registration and login with JWT tokens
 - Secure password hashing with bcrypt
-- Profile management
+- Profile management with photo upload
 
 ### 👥 Group Management
 - Create/join groups with invite codes
 - Edit group details, description, and roommates
+- **Upload group pictures**
 - Mobile-first UI with clean, consistent styling
 
 ### 📋 Chore Scheduler
@@ -56,23 +63,34 @@ Living with roommates comes with everyday challenges that create unnecessary fri
 ### 📦 Inventory Tracker
 - Household item list with status (Low / Good / Full)
 - Add, edit, and remove items
+- Search/filter functionality
 
 ### 🌡️ Preferences
 - Quiet hours configuration
 - Temperature settings (°F)
-- Guests allowed / not allowed
+- Guests, smoking, drinking, parties allowed settings
+- Night-time guests and accommodations
+
+### 📷 Profile & Group Pictures (Sprint 4)
+- Upload profile photos
+- Upload group pictures
+- Image preview before upload
+- Remove/change pictures
 
 ---
 
 ## Architecture
 
 - **Front-end:** React (function components + JSX), client-side routing
-- **Back-end:** Express.js with MongoDB Atlas
+- **Back-end:** Express.js with MongoDB
 - **Database:** MongoDB with Mongoose ODM
 - **Authentication:** JWT (JSON Web Tokens) with bcrypt password hashing
+- **File Uploads:** Multer for image handling
 - **Validation:** express-validator for data validation
 - **Testing:** Mocha + Chai + Supertest; c8 for coverage
-- **No secrets in git:** Use `.env` files (not committed)
+- **Containerization:** Docker & Docker Compose
+- **CI/CD:** GitHub Actions
+- **Deployment:** Digital Ocean Droplet
 
 ---
 
@@ -84,9 +102,9 @@ Base URL: `http://localhost:4000/api`
 - `GET  /health` → `{ ok: true, ts: "..." }`
 
 ### Authentication
-- `POST /signup` → Register new user (body: `{ email, password, name? }`)
-- `POST /login` → Authenticate user (body: `{ email, password }`)
-- `GET  /me` → Get current user (requires Bearer token)
+- `POST /auth/signup` → Register new user
+- `POST /auth/login` → Authenticate user
+- `GET  /auth/me` → Get current user (requires Bearer token)
 
 ### Users
 - `GET  /users/:id` → Get user by ID
@@ -123,6 +141,12 @@ Base URL: `http://localhost:4000/api`
 - `PUT  /groups/:id/inventory/:iid` → Update item
 - `DELETE /groups/:gid/inventory/:iid` → Delete item
 
+### Image Uploads (Sprint 4)
+- `POST /uploads/profile/:id` → Upload profile picture
+- `POST /uploads/group/:id` → Upload group picture
+- `DELETE /uploads/profile/:id` → Remove profile picture
+- `DELETE /uploads/group/:id` → Remove group picture
+
 ---
 
 ## Getting Started
@@ -130,7 +154,12 @@ Base URL: `http://localhost:4000/api`
 ### Prerequisites
 - Node.js **18+**
 - npm
-- MongoDB Atlas account (free tier)
+- MongoDB (local or Atlas)
+- Docker & Docker Compose (optional, for containerized deployment)
+
+---
+
+## Option 1: Local Development
 
 ### 1) Back-end (Express)
 
@@ -143,7 +172,7 @@ Create a `.env` file based on `.env.example`:
 ```
 PORT=4000
 CORS_ORIGIN=http://localhost:3000
-MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/roomier?retryWrites=true&w=majority
+MONGODB_URI=mongodb://127.0.0.1:27017/roomier
 JWT_SECRET=your-secret-key-here
 JWT_EXPIRES_IN=7d
 ```
@@ -178,6 +207,50 @@ npm start                # Opens http://localhost:3000
 
 ---
 
+## Option 2: Docker (Recommended for Deployment)
+
+### Quick Start with Docker Compose
+
+```bash
+# From project root
+docker-compose up --build
+
+# Services:
+# - Frontend: http://localhost:3000
+# - Backend:  http://localhost:4000
+# - MongoDB:  localhost:27017
+```
+
+### Docker Commands
+
+```bash
+# Start all services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+
+# Rebuild and restart
+docker-compose up -d --build
+```
+
+---
+
+
+### Quick Deployment Steps
+
+1. Create a Digital Ocean Droplet (Ubuntu 24.04)
+2. Install Docker on the Droplet
+3. Clone the repository
+4. Configure environment variables
+5. Run `docker-compose up -d`
+
+
+---
+
 ## Front-end Routes
 
 ### Authentication
@@ -188,7 +261,7 @@ npm start                # Opens http://localhost:3000
 - `/` → Redirects to `/dashboard`
 - `/dashboard` - Main dashboard
 - `/groups/new` - Create new group
-- `/groups/:groupId/edit` - Edit group
+- `/groups/:groupId/edit` - Edit group (with photo upload)
 
 ### Chores
 - `/chores` - Chores dashboard
@@ -206,7 +279,7 @@ npm start                # Opens http://localhost:3000
 - `/:groupId/inventory/:itemId/edit` - Edit item
 
 ### Profile
-- `/user-profile` - User profile page
+- `/user-profile` - User profile page (with photo upload)
 
 ---
 
@@ -254,7 +327,7 @@ npm run coverage:shritha
 |----------|-------------|---------|
 | `PORT` | Server port | `4000` |
 | `CORS_ORIGIN` | Allowed frontend origin | `http://localhost:3000` |
-| `MONGODB_URI` | MongoDB Atlas connection string | `mongodb+srv://...` |
+| `MONGODB_URI` | MongoDB connection string | `mongodb://127.0.0.1:27017/roomier` |
 | `JWT_SECRET` | Secret key for JWT signing | `your-secret-key` |
 | `JWT_EXPIRES_IN` | JWT token expiration | `7d` |
 
@@ -265,25 +338,67 @@ npm run coverage:shritha
 
 ---
 
-## Project History
+## Project Structure
 
-* **Sprint 0:** UX design and clickable prototype in Figma
-* **Sprint 1:** Front-end screens, routing, mock data on the client
-* **Sprint 2:** Express API, front-end/back-end integration, Mocha+Chai tests with c8 coverage
-* **Sprint 3:** MongoDB Atlas integration, JWT authentication, data validation
+```
+roomier/
+├── back-end/
+│   ├── src/
+│   │   ├── data/          # Database connection
+│   │   ├── middleware/    # Auth & validation
+│   │   ├── models/        # Mongoose schemas
+│   │   └── routes/        # API endpoints
+│   ├── test/              # Test files by team member
+│   ├── uploads/           # Uploaded images
+│   ├── Dockerfile
+│   └── package.json
+├── front-end/
+│   ├── src/
+│   │   ├── components/    # Reusable UI components
+│   │   ├── context/       # React context (AppContext)
+│   │   ├── lib/           # API client
+│   │   └── pages/         # Route pages
+│   ├── Dockerfile
+│   ├── nginx.conf
+│   └── package.json
+├── .github/
+│   └── workflows/         
+├── docker-compose.yml
+├── docker-compose.prod.yml
+├── DEPLOYMENT.md
+└── README.md
+```
 
 ---
 
-## Project Status
+## Project History
 
-Currently on **Sprint 3 — Database Integration** (MongoDB, JWT Auth, Validation).
+| Sprint | Focus | Status |
+|--------|-------|--------|
+| **Sprint 0** | UX design and clickable prototype in Figma | ✅ Complete |
+| **Sprint 1** | Front-end screens, routing, mock data | ✅ Complete |
+| **Sprint 2** | Express API, front-end/back-end integration, tests | ✅ Complete |
+| **Sprint 3** | MongoDB Atlas integration, JWT authentication, validation | ✅ Complete |
+| **Sprint 4** | Deployment, Docker | ✅ Complete |
+
+---
+
+## Extra Credit Completed (Sprint 4)
+
+- ✅ **Docker Containerization** - Full Docker setup with docker-compose
 
 ---
 
 ## Security Notes
 
 - Never commit `.env` files to version control
-- Use strong, unique passwords for MongoDB Atlas
+- Use strong, unique passwords for MongoDB
 - Rotate JWT secrets periodically in production
 - All passwords are hashed with bcrypt before storage
+- File uploads are validated (type, size) and sanitized
 
+---
+
+## License
+
+This project was created for NYU's Agile Software Development & DevOps course.
