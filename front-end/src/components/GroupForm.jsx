@@ -110,7 +110,24 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
 
   return (
     <form onSubmit={handleSubmit} className="form-stack" style={{ display: 'grid', gap: 12 }}>
-      {/* NEW: wrap basics in a card so they align with everything else */}
+      
+      {/* Roommates */}
+      <section className="card" style={{ display: 'grid', gap: 8 }}>
+        <h3 className="section-title" style={{ marginTop: 0, display:'flex', alignItems:'center', gap:8 }}>
+          <Users size={16} /> Roommates
+        </h3>
+        <div className="item-sub">Comma-separated emails or names</div>
+        <textarea
+          id="roomates-input"
+          className="input"
+          rows={3}
+          value={roommatesText}
+          onChange={e => setRoommatesText(e.target.value)}
+          placeholder="alice@x.com, bob@x.com"
+        />
+      </section>
+
+      {/* Group Info */}
       <section className="card" style={{ display: 'grid', gap: 12 }}>
         <h3 className="section-title" style={{ marginTop: 0 }}>Group</h3>
 
@@ -145,21 +162,6 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
             placeholder="e.g., T38YZ2"
           />
         </label>
-      </section>
-
-      {/* Roommates */}
-      <section className="card" style={{ display: 'grid', gap: 8 }}>
-        <h3 className="section-title" style={{ marginTop: 0, display:'flex', alignItems:'center', gap:8 }}>
-          <Users size={16} /> Roommates
-        </h3>
-        <div className="item-sub">Comma-separated emails or names</div>
-        <textarea
-          className="input"
-          rows={3}
-          value={roommatesText}
-          onChange={e => setRoommatesText(e.target.value)}
-          placeholder="alice@x.com, bob@x.com"
-        />
       </section>
 
       {/* Components */}
