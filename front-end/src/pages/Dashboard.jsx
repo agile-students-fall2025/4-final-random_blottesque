@@ -198,6 +198,7 @@ export default function Dashboard() {
       </div>
 
       <div className="grid-2">
+        {/* Preferences always shown so group can be modified */}
         <StatCard
           title="Preferences"
           value={quietText}
@@ -205,28 +206,34 @@ export default function Dashboard() {
           variant="emerald"
           onClick={() => nav(`/groups/${activeGroupId}/edit?tab=prefs`)}
         />
-        <StatCard
-          title="Chores"
-          value={`${choresDue} due`}
-          icon={ListChecks}
-          variant="indigo"
-          onClick={() => nav('/chores')}
-        />
-        <StatCard
-          title="Expenses"
-          value={`-$${youOwe.toFixed(0)}/+$${youreOwed.toFixed(0)}`}
-          hint="You owe / You're owed"
-          icon={Wallet2}
-          variant="rose"
-          onClick={() => nav('/expenses')}
-        />
-        <StatCard
-          title="Inventory"
-          value={`${data.inventory?.length || 0} items`}
-          icon={Boxes}
-          variant="sky"
-          onClick={() => nav(`/${activeGroupId}/inventory`)}
-        />
+        {group.components.chores &&
+          <StatCard
+            title="Chores"
+            value={`${choresDue} due`}
+            icon={ListChecks}
+            variant="indigo"
+            onClick={() => nav('/chores')}
+          />
+        }
+        {group.components.expenses &&
+          <StatCard
+            title="Expenses"
+            value={`-$${youOwe.toFixed(0)}/+$${youreOwed.toFixed(0)}`}
+            hint="You owe / You're owed"
+            icon={Wallet2}
+            variant="rose"
+            onClick={() => nav('/expenses')}
+          />
+        }
+        {group.components.inventory &&
+          <StatCard
+            title="Inventory"
+            value={`${data.inventory?.length || 0} items`}
+            icon={Boxes}
+            variant="sky"
+            onClick={() => nav(`/${activeGroupId}/inventory`)}
+          />
+        }
       </div>
     </div>
   );

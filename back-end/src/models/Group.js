@@ -122,7 +122,12 @@ const groupSchema = new mongoose.Schema({
     quietStart: { type: String, default: '22:00' },
     quietEnd: { type: String, default: '06:00' },
     temperatureF: { type: Number, default: 72 },
-    guestsAllowed: { type: Boolean, default: true }
+    guestsAllowed: { type: Boolean, default: true },
+    smokingAllowed: { type: Boolean, default: true },
+    drinkingAllowed: { type: Boolean, default: true },
+    partiesAllowed: { type: Boolean, default: true },
+    nightTimeGuestsAllowed: { type: Boolean, default: true },
+    accommodations: { type: String, default: 'None' }
   },
   chores: [choreSchema],
   expenses: [expenseSchema],
