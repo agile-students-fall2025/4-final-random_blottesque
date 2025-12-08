@@ -1,0 +1,46 @@
+# Production overrides for Docker Compose
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+version: '3.8'
+
+services:
+  mongodb:
+    # In production, you might use MongoDB Atlas instead
+    # Comment out this service and update MONGODB_URI in backend
+    restart: always
+
+  backend:
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost:3000}
+      - MONGODB_URI=${MONGODB_URI:-mongodb://mongodb:27017/roomier}
+      - JWT_SECRET=${JWT_SECRET}
+    # Don't expose port directly in production - use nginx reverse proxy
+    # ports:
+    #   - "4000:4000"
+
+  frontend:
+    restart: always
+    build:
+      args:
+        - REACT_APP_API_URL=${REACT_APP_API_URL:-/api}
+    ports:
+      - "80:80"
+
+  # Nginx reverse proxy for production
+  nginx:
+    image: nginx:alpine
+    container_name: roomier-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.prod.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - roomier-network

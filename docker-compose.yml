@@ -1,0 +1,84 @@
+# Docker Compose for Roomier Application
+# Usage:
+#   Development: docker-compose up
+#   Production:  docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7
+    container_name: roomier-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=roomier
+    networks:
+      - roomier-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/roomier --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  # Backend API
+  backend:
+    build:
+      context: ./back-end
+      dockerfile: Dockerfile
+    container_name: roomier-backend
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - CORS_ORIGIN=http://localhost:3000
+      - MONGODB_URI=mongodb://mongodb:27017/roomier
+      - JWT_SECRET=${JWT_SECRET:-roomier-jwt-secret-key-change-in-production}
+      - JWT_EXPIRES_IN=7d
+      - NODE_ENV=production
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - roomier-network
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:4000/api/health || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Frontend React App
+  frontend:
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile
+      args:
+        - REACT_APP_API_URL=http://localhost:4000/api
+    container_name: roomier-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - roomier-network
+
+networks:
+  roomier-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+    driver: local
+  uploads_data:
+    driver: local
