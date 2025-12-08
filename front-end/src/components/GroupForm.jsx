@@ -70,8 +70,20 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
       : true
   );
 
-  const [accommodationsTrue, setAccommodationsTrue] = useState(false);
-  const [accommodations, setAccommodations] = useState("None");
+  
+  const [accommodations, setAccommodations] = useState(
+    typeof initial?.preferences?.accommodations === "string" &&
+    initial.preferences.accommodations !== "None"
+      ? initial.preferences.accommodations
+      : "None"
+  );
+
+  const [accommodationsTrue, setAccommodationsTrue] = useState(
+    typeof initial?.preferences?.accommodations === "string" &&
+    initial.preferences.accommodations !== "None"
+      ? true
+      : false
+  );
 
 
   async function handleSubmit(e) {
@@ -345,7 +357,7 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
               <span>Accommodations</span>
             </label>
 
-            <label onClick={() => setAccommodationsTrue(false)} style={{display:'flex', alignItems:'center', gap:8, cursor:'pointer'}}>
+            <label onClick={() => {setAccommodationsTrue(false); setAccommodations("None");}} style={{display:'flex', alignItems:'center', gap:8, cursor:'pointer'}}>
                 {accommodationsTrue === false ? (
                 <CheckCircle size={18} color="#059669" />
               ) : (
