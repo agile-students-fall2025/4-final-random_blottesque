@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserRound, Mail, Phone, LogOut } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import ImageUpload from '../components/ImageUpload';
 import * as api from '../lib/api';
 
 export default function UserProfile() {
@@ -21,13 +22,14 @@ export default function UserProfile() {
   }, [user]);
 
   const handleSave = async () => {
-    if (!user?._id) return;
+    if (!user?._id && !user?.id) return;
     
     setSaving(true);
     setError('');
     
     try {
-      const updatedUser = await api.updateUser(user._id, { name, phone });
+      const userId = user._id || user.id;
+      const updatedUser = await api.updateUser(userId, { name, phone });
 
       setEditing(false);
 
@@ -46,6 +48,16 @@ export default function UserProfile() {
     }
   };
 
+  const handleImageUploadSuccess = (data) => {
+    if (data.user) {
+      setUser({ ...user, ...data.user });
+      localStorage.setItem(
+        'roomier_user',
+        JSON.stringify({ ...user, ...data.user })
+      );
+    }
+  };
+
   const handleLogout = () => {
     logout();
     nav('/login');
@@ -61,6 +73,8 @@ export default function UserProfile() {
       </div>
     );
   }
+
+  const userId = user._id || user.id;
 
   return (
     <div style={{display:'grid', gap:12}}>
@@ -85,97 +99,98 @@ export default function UserProfile() {
           textAlign: "center",
           padding: 20
         }}>
-          <div style={{
-            width: 100,
-            height: 100,
-            borderRadius: "50%",
-            background: 'var(--indigo-50)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: 16
-          }}>
-            <UserRound size={48} color="var(--indigo-600)" />
-          </div>
+          {/* Profile Picture Upload */}
+          <ImageUpload
+            type="profile"
+            id={userId}
+            currentImage={user.photoUrl}
+            onUploadSuccess={handleImageUploadSuccess}
+            size="lg"
+            placeholder={<UserRound size={48} color="var(--indigo-600)" />}
+          />
 
-          {editing ? (
-            <div style={{ width: '100%', maxWidth: 300 }}>
-              <label style={{ display: 'block', marginBottom: 12 }}>
-                <div className="item-sub" style={{ textAlign: 'left' }}>Name</div>
-                <input 
-                  className="input"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Your name"
-                />
-              </label>
-              
-              <label style={{ display: 'block', marginBottom: 12 }}>
-                <div className="item-sub" style={{ textAlign: 'left' }}>Phone</div>
-                <input 
-                  className="input"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="Phone number"
-                />
-              </label>
+          <div style={{ marginTop: 16 }}>
+            {editing ? (
+              <div style={{ width: '100%', maxWidth: 300 }}>
+                <label style={{ display: 'block', marginBottom: 12 }}>
+                  <div className="item-sub" style={{ textAlign: 'left' }}>Name</div>
+                  <input 
+                    className="input"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Your name"
+                  />
+                </label>
+                
+                <label style={{ display: 'block', marginBottom: 12 }}>
+                  <div className="item-sub" style={{ textAlign: 'left' }}>Phone</div>
+                  <input 
+                    className="input"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="Phone number"
+                  />
+                </label>
 
-              <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
-                <button 
-                  className="btn btn-primary"
-                  onClick={handleSave}
-                  disabled={saving}
-                >
-                  {saving ? 'Saving...' : 'Save'}
-                </button>
-                <button 
-                  className="btn btn-ghost"
-                  onClick={() => setEditing(false)}
-                  disabled={saving}
-                >
-                  Cancel
-                </button>
+                <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+                  <button 
+                    className="btn btn-primary"
+                    onClick={handleSave}
+                    disabled={saving}
+                  >
+                    {saving ? 'Saving...' : 'Save'}
+                  </button>
+                  <button 
+                    className="btn btn-ghost"
+                    onClick={() => setEditing(false)}
+                    disabled={saving}
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
-            </div>
-          ) : (
-            <>
-              <div style={{ fontSize: 24, fontWeight: 600, marginBottom: 8 }}>
-                {user.name || 'User'}
-              </div>
+            ) : (
+              <>
+                <div style={{ fontSize: 24, fontWeight: 600, marginBottom: 8 }}>
+                  {user.name || 'User'}
+                </div>
 
-              <div style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: 8,
-                color: '#666',
-                marginBottom: 4
-              }}>
-                <Mail size={16} />
-                {user.email}
-              </div>
-
-              {user.phone && (
                 <div style={{ 
                   display: 'flex', 
                   alignItems: 'center', 
                   gap: 8,
                   color: '#666',
-                  marginBottom: 16
+                  marginBottom: 4,
+                  justifyContent: 'center'
                 }}>
-                  <Phone size={16} />
-                  {user.phone}
+                  <Mail size={16} />
+                  {user.email}
                 </div>
-              )}
 
-              <button 
-                className="btn btn-ghost"
-                onClick={() => setEditing(true)}
-                style={{ marginTop: 12 }}
-              >
-                Edit Profile
-              </button>
-            </>
-          )}
+                {user.phone && (
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 8,
+                    color: '#666',
+                    marginBottom: 16,
+                    justifyContent: 'center'
+                  }}>
+                    <Phone size={16} />
+                    {user.phone}
+                  </div>
+                )}
+
+                <button 
+                  className="btn btn-ghost"
+                  onClick={() => setEditing(true)}
+                  style={{ marginTop: 12 }}
+                >
+                  Edit Profile
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </section>
 
@@ -191,8 +206,6 @@ export default function UserProfile() {
         <LogOut size={18} />
         Sign Out
       </button>
-
-      
     </div>
   );
 }
