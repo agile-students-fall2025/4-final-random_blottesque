@@ -115,7 +115,7 @@ export default function Dashboard() {
           </div>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
-          <button className="btn btn-ghost" onClick={() => nav('/user-profile')}>Profile</button>
+          <button className="btn btn-primary" onClick={() => nav('/user-profile')}>Profile</button>
           <button className="btn btn-ghost" onClick={handleLogout}>Sign Out</button>
         </div>
       </div>
@@ -138,7 +138,7 @@ export default function Dashboard() {
 
       {/* Preferences + Roommates summary cards */}
       <div className="grid-2">
-        <section className="card" style={{ display: 'grid', gap: 8 }}>
+        <section className="card" style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <h3 className="section-title" style={{ marginTop: 0 }}>Preferences</h3>
           <div className="item-sub">Quiet Hours</div>
           <div style={{ fontWeight: 800 }}>{quietText}</div>
@@ -168,12 +168,16 @@ export default function Dashboard() {
           <div style={{ fontWeight: 800 }}>
             {accomm === 'None' || accomm === '' ? 'None' : accomm}
           </div>
-          <button className="btn btn-ghost" onClick={() => nav(`/groups/${activeGroupId}/edit?tab=prefs`)}>
+          <button 
+            className="btn btn-ghost" 
+            style={{ marginTop: 'auto' }}
+            onClick={() => nav(`/groups/${activeGroupId}/edit?tab=prefs`)}
+          >
             EDIT PREFERENCES
           </button>
         </section>
 
-        <section className="card" style={{ display: 'grid', gap: 12 }}>
+        <section className="card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <h3 className="section-title" style={{ margin: 0 }}>Roommates</h3>
 
           {roommates.length === 0 && (
@@ -183,13 +187,16 @@ export default function Dashboard() {
           {roommates.length > 0 && (
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
               {roommates.map((r, i) => (
-                <span key={i} className="rm-chip rm-chip-lg">{rmLabel(r)}</span>
+                <span key={i} className="rm-chip rm-chip-lg" 
+                style={{ whiteSpace: "normal", wordBreak: "break-word" }}
+                >{rmLabel(r)}</span>
               ))}
             </div>
           )}
 
           <button
             className="btn btn-ghost"
+            style={{ marginTop: 'auto' }}
             onClick={() => nav(`/groups/${activeGroupId}/edit?tab=members`)}
           >
             EDIT ROOMMATES

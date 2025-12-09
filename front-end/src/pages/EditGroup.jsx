@@ -68,8 +68,8 @@ export default function EditGroup() {
     setSaving(true);
     
     try {
+      
       await updateGroup(currentGroupId, form);
-      alert('Group saved successfully!');
       nav('/dashboard');
     } catch (err) {
       setError(err.message || 'Failed to save group');
@@ -163,13 +163,25 @@ export default function EditGroup() {
           icon={<Users size={18} />}
           title="Edit Members List"
           subtitle="Use the roommates field in the form below"
-          onClick={() => document.querySelector('textarea')?.focus()}
+          onClick={() => {
+            const el = document.getElementById('roomates-input');
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              el.focus();
+            }
+          }}
         />
         <QuickTile
           icon={<FileText size={18} />}
           title="Edit Description"
           subtitle="Use the form below"
-          onClick={() => document.getElementById('desc-input')?.focus()}
+          onClick={() => {
+            const el = document.getElementById('desc-input');
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              el.focus();
+            }
+          }}
         />
       </div>
 
