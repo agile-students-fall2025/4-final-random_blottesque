@@ -165,6 +165,18 @@ export const updatePreferences = async (groupId, prefs) => {
   });
 };
 
+// ==================== ROOMMATES API ====================
+
+export const getRoommates = async (groupId) => {
+  return apiRequest(`/groups/${groupId}/roommates`);
+};
+
+export const deleteRoommate = async (groupId, userId) => {
+  return apiRequest(`/groups/${groupId}/roommates/${userId}`, {
+    method: 'DELETE',
+  });
+};
+
 // ==================== CHORES API ====================
 
 export const getChores = async (groupId) => {

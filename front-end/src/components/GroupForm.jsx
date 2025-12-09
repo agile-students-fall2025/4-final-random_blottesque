@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useApp } from '../context/AppContext';
 import { SlidersHorizontal, Users, AppWindow, CheckSquare, Square, CheckCircle, Circle } from 'lucide-react';
 
 const c2f = (c) => Math.round((c * 9) / 5 + 32);
@@ -12,10 +13,8 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
   const [description, setDescription] = useState(initial.description || '');
   const [inviteCode, setInviteCode] = useState(initial.inviteCode || '');
 
-  // Roommates text
-  const [roommatesText, setRoommatesText] = useState(
-    Array.isArray(initial.roommates) ? initial.roommates.map(toChip).join(', ') : ''
-  );
+  const { user } = useApp();
+
 
   // Components toggles
   const has = (k) => Array.isArray(initial.components) && initial.components.includes(k);
@@ -92,7 +91,7 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
       name: name.trim(),
       description: description.trim(),
       inviteCode: inviteCode.trim(),
-      roommates: fromText(roommatesText),
+      roommates: [user?._id],
       components: Object.entries(components).filter(([, v]) => v).map(([k]) => k),
       quietHours: { start: quietStart || null, end: quietEnd || null },
       preferences: {
@@ -110,22 +109,6 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
 
   return (
     <form onSubmit={handleSubmit} className="form-stack" style={{ display: 'grid', gap: 12 }}>
-      
-      {/* Roommates */}
-      <section className="card" style={{ display: 'grid', gap: 8 }}>
-        <h3 className="section-title" style={{ marginTop: 0, display:'flex', alignItems:'center', gap:8 }}>
-          <Users size={16} /> Roommates
-        </h3>
-        <div className="item-sub">Comma-separated emails or names</div>
-        <textarea
-          id="roomates-input"
-          className="input"
-          rows={3}
-          value={roommatesText}
-          onChange={e => setRoommatesText(e.target.value)}
-          placeholder="alice@x.com, bob@x.com"
-        />
-      </section>
 
       {/* Group Info */}
       <section className="card" style={{ display: 'grid', gap: 12 }}>

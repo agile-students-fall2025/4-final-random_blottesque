@@ -110,8 +110,8 @@ const groupSchema = new mongoose.Schema({
     default: () => nanoid(6).toUpperCase()
   },
   roommates: [{
-    type: String,
-    trim: true
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   }],
   components: {
     chores: { type: Boolean, default: true },

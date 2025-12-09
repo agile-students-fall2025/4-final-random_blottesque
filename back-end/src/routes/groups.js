@@ -199,7 +199,7 @@ router.delete('/groups/:id', authenticate, async (req, res) => {
  */
 router.get('/groups/:id/dashboard', authenticate, async (req, res) => {
   try {
-    const group = await Group.findById(req.params.id);
+    const group = await Group.findById(req.params.id).populate('roommates', 'email name phone photoUrl'); ;
     
     if (!group) {
       return res.status(404).json({ error: 'Group not found' });
@@ -667,9 +667,9 @@ router.post('/groups/join', authenticate, async (req, res) => {
     // Add user to members
     group.members.push(req.user._id);
     
-    // Add user email to roommates if not already there
-    if (!group.roommates.includes(req.user.email)) {
-      group.roommates.push(req.user.email);
+    // Add user to roommates if not already there
+    if (!group.roommates.includes(req.user._id)) {
+      group.roommates.push(req.user._id);
     }
 
     await group.save();
@@ -678,6 +678,58 @@ router.post('/groups/join', authenticate, async (req, res) => {
   } catch (error) {
     console.error('Join group error:', error);
     res.status(500).json({ error: 'Failed to join group' });
+  }
+});
+
+// ==================== ROOMMATES ROUTES ====================
+
+/**
+ * GET /api/groups/:id/roommates
+ * Get all roommates for a group
+ */
+router.get('/groups/:id/roommates', authenticate, async (req, res) => {
+  try {
+    const group = await Group.findById(req.params.id).populate('roommates', 'name email phone photoUrl');;
+    
+    if (!group) {
+      return res.status(404).json({ error: 'Group not found' });
+    }
+
+    res.json(group.roommates);
+  } catch (error) {
+    console.error('Get roommates error:', error);
+    if (error.name === 'CastError') {
+      return res.status(404).json({ error: 'Group not found' });
+    }
+    res.status(500).json({ error: 'Failed to fetch roommates' });
+  }
+});
+
+/**
+ * DELETE /api/groups/:gid/roommates/:uid
+ * Delete an roommate
+ */
+router.delete('/groups/:gid/roommates/:uid', authenticate, async (req, res) => {
+  try {
+    const group = await Group.findById(req.params.gid);
+    
+    if (!group) {
+      return res.status(404).json({ error: 'Group not found' });
+    }
+
+    const userIndex = group.roommates.findIndex(i => i._id === req.params.uid);
+    
+    if (userIndex === -1) {
+      return res.status(404).json({ error: 'Item not found' });
+    }
+
+    group.roommates.splice(userIndex, 1);
+    await group.save();
+
+    res.json({ ok: true });
+  } catch (error) {
+    console.error('Delete roommate error:', error);
+    res.status(500).json({ error: 'Failed to delete roommate' });
   }
 });
 

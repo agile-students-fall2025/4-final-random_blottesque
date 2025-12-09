@@ -189,7 +189,7 @@ export default function Dashboard() {
               {roommates.map((r, i) => (
                 <span key={i} className="rm-chip rm-chip-lg" 
                 style={{ whiteSpace: "normal", wordBreak: "break-word" }}
-                >{rmLabel(r)}</span>
+                >{rmLabel(r.name)}</span>
               ))}
             </div>
           )}

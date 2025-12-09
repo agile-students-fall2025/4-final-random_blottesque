@@ -4,7 +4,7 @@ import GroupForm from '../components/GroupForm';
 import { useApp } from '../context/AppContext';
 
 export default function CreateGroup() {
-  const { createGroup } = useApp();
+  const { createGroup, user } = useApp();
   const nav = useNavigate();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -26,7 +26,7 @@ export default function CreateGroup() {
     <div className="content-narrow">
       <h1 style={{ margin: 0, fontSize: 20, fontWeight: 800 }}>Create Group</h1>
       <p className="item-sub">
-        Name your household, add roommates, pick components, and set quiet hours.
+        Name your household, pick components, and set quiet hours.
       </p>
 
       {error && (
