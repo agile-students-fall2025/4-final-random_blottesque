@@ -1,5 +1,5 @@
 # Roomier Backend Dockerfile
-FROM node:18-alpine
+FROM node:20-alpine
 
 # Set working directory
 WORKDIR /app
@@ -8,9 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-##RUN npm ci --only=production
-
-RUN npm@5 ci --only=production
+RUN npm ci --only=production
 
 # Copy source code
 COPY . .
