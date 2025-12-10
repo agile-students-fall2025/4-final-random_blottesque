@@ -44,8 +44,6 @@ export default function UserProfile() {
 
   useEffect(() => {
     handleLoadUser();
-    console.log(viewedUser);
-    console.log(isCurrentUser);
   }, [viewedUserId, user, isCurrentUser]);
 
   const handleSave = async () => {
@@ -123,8 +121,6 @@ export default function UserProfile() {
   }
 
   const userId = viewedUser._id || viewedUser.id;
-  console.log(viewedUser);
-    console.log(isCurrentUser);
 
   return (
     <div style={{display:'grid', gap:12}}>
@@ -161,27 +157,22 @@ export default function UserProfile() {
               placeholder={<UserRound size={48} color="var(--indigo-600)" />}
             />
           ) : (
-          <div>
-                {viewedUser.photoUrl ? (
-              
-                  <img
-                    src={getImageUrl(viewedUser.photoUrl)}
-                      alt={'Profile'}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover'
-                    }}
-                      />
-                
-                ) : (
-                    <UserRound size={48} color="var(--indigo-600)" />
-                    
-                  )}
-                </div>
-              
-          )};
-          
+            <div>
+              {viewedUser.photoUrl ? (
+                <img
+                  src={getImageUrl(viewedUser.photoUrl)}
+                  alt={'Profile'}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover'
+                  }}
+                />
+              ) : (
+                <UserRound size={48} color="var(--indigo-600)" />
+              )}
+            </div>
+          )}
 
           <div style={{ marginTop: 16 }}>
             {editing && isCurrentUser ? (
@@ -253,17 +244,17 @@ export default function UserProfile() {
                     <Phone size={16} />
                     {viewedUser.phone}
                   </div>
-                  )}
-                  
-                  {isCurrentUser && (
-                    <button 
-                      className="btn btn-ghost"
-                      onClick={() => setEditing(true)}
-                      style={{ marginTop: 12 }}
-                    >
+                )}
+                
+                {isCurrentUser && (
+                  <button 
+                    className="btn btn-ghost"
+                    onClick={() => setEditing(true)}
+                    style={{ marginTop: 12 }}
+                  >
                     Edit Profile
-                    </button>
-                  )}
+                  </button>
+                )}
 
               </>
             )}
@@ -276,15 +267,15 @@ export default function UserProfile() {
       </button>
 
       {isCurrentUser && (
-      <button 
-        className="btn btn-ghost btn-full" 
-        onClick={handleLogout}
-        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
-      >
-        <LogOut size={18} />
-        Sign Out
+        <button 
+          className="btn btn-ghost btn-full" 
+          onClick={handleLogout}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+        >
+          <LogOut size={18} />
+          Sign Out
         </button>
-        )}
+      )}
     </div>
   );
 }
