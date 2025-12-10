@@ -88,7 +88,7 @@ export const logout = () => {
 };
 
 export const getCurrentUser = async () => {
-  return apiRequest('auth/me');
+  return apiRequest('/auth/me');
 };
 
 export const getStoredUser = () => {
