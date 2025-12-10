@@ -255,6 +255,45 @@ export const deleteInventoryItem = async (groupId, itemId) => {
   });
 };
 
+// ==================== IMAGE UPLOAD API ====================
+
+/**
+ * Upload an image for profile or group
+ * @param {string} type - 'profile' or 'group'
+ * @param {string} id - User ID or Group ID
+ * @param {File} file - The image file to upload
+ */
+export const uploadImage = async (type, id, file) => {
+  const formData = new FormData();
+  formData.append('image', file);
+
+  const response = await fetch(`${API_URL}/uploads/${type}/${id}`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${authToken}`
+    },
+    body: formData
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Upload failed');
+  }
+
+  return response.json();
+};
+
+/**
+ * Remove an image from profile or group
+ * @param {string} type - 'profile' or 'group'
+ * @param {string} id - User ID or Group ID
+ */
+export const removeImage = async (type, id) => {
+  return apiRequest(`/uploads/${type}/${id}`, {
+    method: 'DELETE'
+  });
+};
+
 // Export all functions as default for backwards compatibility
 export default {
   // Auth
@@ -304,4 +343,8 @@ export default {
   createInventoryItem,
   updateInventoryItem,
   deleteInventoryItem,
+  
+  // Images
+  uploadImage,
+  removeImage,
 };
