@@ -15,6 +15,10 @@
         "coverage:team": "c8 --reporter=text --reporter=lcov --check-coverage --branches=10 --functions=10 --lines=10 --statements=10 mocha \"test/{cyryl,lina,luna,shritha,sunil}/**/*.spec.js\"",
         "coverage:members": "npm run coverage:cyryl && npm run coverage:lina && npm run coverage:luna && npm run coverage:shritha && npm run coverage:sunil"
     },
+    "engines":{
+        "node": "20.x"
+    },
+    
     "dependencies": {
         "bcryptjs": "^2.4.3",
         "cors": "^2.8.5",
