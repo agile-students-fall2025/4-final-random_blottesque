@@ -84,8 +84,14 @@ export default function Dashboard() {
   const accomm = group?.prefs?.accommodations ?? data?.prefs?.accommodations;
 
   // Roommates
-  const roommates = Array.isArray(group?.roommates) ? group.roommates : [];
-  const rmLabel = (r) => (typeof r === 'string' ? r : (r?.name || r?.email || '—'));
+  const roommates = data.roommates || [];
+  const rmLabel = (r) => {
+    if (!r) return '—';
+    if (typeof r === 'string') return r;
+    return r.name || r.email || '—';
+  };
+
+  console.log(roommates);
 
   return (
     <div style={{ display: 'grid', gap: 12 }}>
@@ -187,9 +193,9 @@ export default function Dashboard() {
           {roommates.length > 0 && (
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
               {roommates.map((r, i) => (
-                <span key={i} className="rm-chip rm-chip-lg" 
+                <span key={i} className="rm-chip rm-chip-lg" onClick={() => nav(`/user-profile/${r._id.toString()}`)}
                 style={{ whiteSpace: "normal", wordBreak: "break-word" }}
-                >{rmLabel(r.name)}</span>
+                >{rmLabel(r.name || r.email)}</span>
               ))}
             </div>
           )}

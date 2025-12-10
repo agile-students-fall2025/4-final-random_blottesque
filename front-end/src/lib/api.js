@@ -277,6 +277,8 @@ export default {
   updateGroup,
   deleteGroup,
   joinGroupByCode,
+  getRoommates,
+  deleteRoommate,
   
   // Dashboard
   getDashboard,

@@ -54,7 +54,7 @@ export default function CreateGroup() {
 
         {joinMode 
           ? 'Enter the invite code shared by your group.'
-          : 'Name your household, add roommates, pick components, and set quiet hours.'
+          : 'Name your household, pick components, and set quiet hours.'
         }
       </p>
 

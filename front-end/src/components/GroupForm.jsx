@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { SlidersHorizontal, Users, AppWindow, CheckSquare, Square, CheckCircle, Circle } from 'lucide-react';
+import * as api from '../lib/api';
+import { SlidersHorizontal, Users, Trash2, AppWindow, CheckSquare, Square, CheckCircle, Circle } from 'lucide-react';
 
 const c2f = (c) => Math.round((c * 9) / 5 + 32);
 
@@ -12,8 +13,9 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
   const [name, setName] = useState(initial.name || '');
   const [description, setDescription] = useState(initial.description || '');
   const [inviteCode, setInviteCode] = useState(initial.inviteCode || '');
+  const [error, setError] = useState('');
 
-  const { user } = useApp();
+  const { user, activeGroupId } = useApp();
 
 
   // Components toggles
@@ -84,6 +86,26 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
       : false
   );
 
+  const [roommates, setRoommates] = useState(initial?.roommates || []);
+
+  // Delete roommate via API
+  const handleRMDelete = async (userId) => {
+    if (!window.confirm('Delete this roommate?')) return;
+          
+    try {
+        await api.deleteRoommate(activeGroupId, userId);
+        setRoommates(prev => prev.filter(r => (r._id || r.id) !== userId));
+    } catch (err) {
+        setError(err.message || 'Failed to delete roommate');
+    }
+  };
+
+  const rmLabel = (r) => {
+    if (!r) return '—';
+    if (typeof r === 'string') return r;
+    return r.name || r.email || '—';
+  };
+
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -91,7 +113,7 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
       name: name.trim(),
       description: description.trim(),
       inviteCode: inviteCode.trim(),
-      roommates: [user?._id],
+      roommates: roommates || [],
       components: Object.entries(components).filter(([, v]) => v).map(([k]) => k),
       quietHours: { start: quietStart || null, end: quietEnd || null },
       preferences: {
@@ -106,6 +128,8 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
     };
     await onSubmit?.(payload);
   }
+
+  console.log(roommates);
 
   return (
     <form onSubmit={handleSubmit} className="form-stack" style={{ display: 'grid', gap: 12 }}>
@@ -145,6 +169,30 @@ export default function GroupForm({ initial = {}, onSubmit, submitLabel = 'Save'
             placeholder="e.g., T38YZ2"
           />
         </label>
+      </section>
+
+      <section className='card'>
+        <Users size={16} /> Roomates
+        {roommates.length === 0 ? (
+          <div className='item-sub'>Nothing yet! Send out the invite code to add roommates.</div>
+        ) : (
+        <div>
+              {roommates.length > 0 && (
+                <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                  {roommates.map((r, i) => (
+                    <div key={i}>
+                      <span className="rm-chip rm-chip-lg"
+                        style={{ whiteSpace: "normal", wordBreak: "break-word" }}>{rmLabel(r.name || r.email)}</span>
+                      <button className='btn btn-ghost' onClick={() => handleRMDelete(r._id || r.id)}>
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  ))}
+            </div>
+              )}
+              </div>
+        )}
+        
       </section>
 
       {/* Components */}

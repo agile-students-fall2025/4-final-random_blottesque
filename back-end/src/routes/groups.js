@@ -78,7 +78,7 @@ router.post('/groups', validateCreateGroup, authenticate, async (req, res) => {
       name,
       description: description || '',
       inviteCode: inviteCode?.toUpperCase() || nanoid(6).toUpperCase(),
-      roommates: Array.isArray(roommates) ? roommates : [],
+      roommates: req.user ? [req.user?._id] : [],
       components: normalizedComponents,
       prefs,
       createdBy: req.user?._id,
@@ -86,6 +86,7 @@ router.post('/groups', validateCreateGroup, authenticate, async (req, res) => {
     });
 
     await group.save();
+    await group.populate('roommates', 'email name phone photoUrl');
     res.status(201).json(group);
   } catch (error) {
     console.error('Create group error:', error);
@@ -99,7 +100,7 @@ router.post('/groups', validateCreateGroup, authenticate, async (req, res) => {
  */
 router.get('/groups/:id', authenticate, async (req, res) => {
   try {
-    const group = await Group.findById(req.params.id);
+    const group = await Group.findById(req.params.id).populate('roommates', 'email name phone photoUrl');
     
     if (!group) {
       return res.status(404).json({ error: 'Group not found' });
@@ -133,7 +134,15 @@ router.put('/groups/:id', authenticate, validateUpdateGroup, async (req, res) =>
     if (name !== undefined) group.name = name;
     if (description !== undefined) group.description = description;
     if (inviteCode !== undefined) group.inviteCode = inviteCode.toUpperCase();
-    if (roommates !== undefined) group.roommates = roommates;
+    if (roommates !== undefined) {
+      if (roommates.length === 0) {
+        group.roommates = [req.user._id];
+      } else {
+        group.roommates = roommates.map(id => 
+          typeof id === 'string' ? mongoose.Types.ObjectId(id) : id
+        );
+      }
+    }
 
     // Update components
     if (Array.isArray(components)) {
@@ -164,6 +173,7 @@ router.put('/groups/:id', authenticate, validateUpdateGroup, async (req, res) =>
     }
 
     await group.save();
+    await group.populate('roommates', 'email name phone photoUrl');
     res.json(group);
   } catch (error) {
     console.error('Update group error:', error);
@@ -199,7 +209,7 @@ router.delete('/groups/:id', authenticate, async (req, res) => {
  */
 router.get('/groups/:id/dashboard', authenticate, async (req, res) => {
   try {
-    const group = await Group.findById(req.params.id).populate('roommates', 'email name phone photoUrl'); ;
+    const group = await Group.findById(req.params.id).populate('roommates', 'email name phone photoUrl');
     
     if (!group) {
       return res.status(404).json({ error: 'Group not found' });
@@ -673,6 +683,7 @@ router.post('/groups/join', authenticate, async (req, res) => {
     }
 
     await group.save();
+    await group.populate('roommates', 'name email phone photoUrl');
 
     res.json(group);
   } catch (error) {
@@ -689,7 +700,7 @@ router.post('/groups/join', authenticate, async (req, res) => {
  */
 router.get('/groups/:id/roommates', authenticate, async (req, res) => {
   try {
-    const group = await Group.findById(req.params.id).populate('roommates', 'name email phone photoUrl');;
+    const group = await Group.findById(req.params.id).populate('roommates', 'name email phone photoUrl');
     
     if (!group) {
       return res.status(404).json({ error: 'Group not found' });
@@ -707,7 +718,7 @@ router.get('/groups/:id/roommates', authenticate, async (req, res) => {
 
 /**
  * DELETE /api/groups/:gid/roommates/:uid
- * Delete an roommate
+ * Delete a roommate
  */
 router.delete('/groups/:gid/roommates/:uid', authenticate, async (req, res) => {
   try {
@@ -717,13 +728,15 @@ router.delete('/groups/:gid/roommates/:uid', authenticate, async (req, res) => {
       return res.status(404).json({ error: 'Group not found' });
     }
 
-    const userIndex = group.roommates.findIndex(i => i._id === req.params.uid);
+    const roommateIndex = group.roommates.findIndex(i => i._id.toString() === req.params.uid);
+    const memberIndex = group.roommates.findIndex(i => i._id.toString() === req.params.uid);
     
-    if (userIndex === -1) {
-      return res.status(404).json({ error: 'Item not found' });
+    if (roommateIndex === -1 || memberIndex === -1) {
+      return res.status(404).json({ error: 'Roommate not found' });
     }
 
-    group.roommates.splice(userIndex, 1);
+    group.roommates.splice(roommateIndex, 1);
+    group.roommates.splice(memberIndex, 1);
     await group.save();
 
     res.json({ ok: true });

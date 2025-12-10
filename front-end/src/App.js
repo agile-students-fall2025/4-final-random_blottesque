@@ -55,7 +55,9 @@ export default function App() {
           <Route path="/:groupId/inventory/:itemId/edit" element={<ProtectedRoute><EditItem /></ProtectedRoute>} />
 
           {/* Profile Routes */}
-          <Route path="/user-profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+        <Route path="/user-profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+        <Route path="/user-profile/:userId" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+          
 
           {/* Join Group Routes */}
           <Route path="/groups/join" element={<ProtectedRoute><JoinGroup /></ProtectedRoute>} />

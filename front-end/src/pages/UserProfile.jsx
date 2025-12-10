@@ -1,25 +1,52 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { UserRound, Mail, Phone, LogOut } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import ImageUpload from '../components/ImageUpload';
 import * as api from '../lib/api';
+import { getImageUrl } from '../lib/image';
 
 export default function UserProfile() {
   const nav = useNavigate();
+  const { userId: viewedUserId } = useParams();
+  const [viewedUser, setViewedUser] = useState(null);
   const { user, setUser, logout } = useApp();
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    if (user) {
-      setName(user.name || '');
-      setPhone(user.phone || '');
+  const isCurrentUser = !viewedUserId || viewedUserId === user?._id?.toString() || viewedUserId === user?.id?.toString();
+
+  const handleLoadUser = async () => {
+    setLoading(true);
+    if (isCurrentUser) {
+      setViewedUser(user);
+
+      if (user) {
+        setName(user.name || '');
+        setPhone(user.phone || '');
+      }
     }
-  }, [user]);
+    else {
+      try {
+        const fetchedUser = await api.getUser(viewedUserId);
+        setViewedUser(fetchedUser);
+      } catch (err) {
+        setError('Failed to load user profile');
+        console.error('Load user error:', err);
+      }
+    }
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    handleLoadUser();
+    console.log(viewedUser);
+    console.log(isCurrentUser);
+  }, [viewedUserId, user, isCurrentUser]);
 
   const handleSave = async () => {
     if (!user?._id && !user?.id) return;
@@ -35,6 +62,7 @@ export default function UserProfile() {
 
       if (updatedUser) {
         setUser({ ...user, ...updatedUser });
+        setViewedUser({ ...user, ...updatedUser });
       }
 
       localStorage.setItem(
@@ -51,6 +79,7 @@ export default function UserProfile() {
   const handleImageUploadSuccess = (data) => {
     if (data.user) {
       setUser({ ...user, ...data.user });
+      setViewedUser({ ...user, ...data.user });
       localStorage.setItem(
         'roomier_user',
         JSON.stringify({ ...user, ...data.user })
@@ -74,7 +103,28 @@ export default function UserProfile() {
     );
   }
 
-  const userId = user._id || user.id;
+  if (!viewedUser) {
+    return (
+      <div className="card" style={{ textAlign: 'center', padding: 24 }}>
+        <p>User not found.</p>
+        <button className="btn btn-primary" onClick={() => nav('/dashboard')}>
+          Back to Dashboard
+        </button>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="card" style={{ textAlign: 'center', padding: 24 }}>
+        <p>Loading profile</p>
+      </div>
+    )
+  }
+
+  const userId = viewedUser._id || viewedUser.id;
+  console.log(viewedUser);
+    console.log(isCurrentUser);
 
   return (
     <div style={{display:'grid', gap:12}}>
@@ -100,17 +150,41 @@ export default function UserProfile() {
           padding: 20
         }}>
           {/* Profile Picture Upload */}
-          <ImageUpload
-            type="profile"
-            id={userId}
-            currentImage={user.photoUrl}
-            onUploadSuccess={handleImageUploadSuccess}
-            size="lg"
-            placeholder={<UserRound size={48} color="var(--indigo-600)" />}
-          />
+
+          {isCurrentUser ? (
+            <ImageUpload
+              type="profile"
+              id={userId}
+              currentImage={user.photoUrl}
+              onUploadSuccess={handleImageUploadSuccess}
+              size="lg"
+              placeholder={<UserRound size={48} color="var(--indigo-600)" />}
+            />
+          ) : (
+          <div>
+                {viewedUser.photoUrl ? (
+              
+                  <img
+                    src={getImageUrl(viewedUser.photoUrl)}
+                      alt={'Profile'}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover'
+                    }}
+                      />
+                
+                ) : (
+                    <UserRound size={48} color="var(--indigo-600)" />
+                    
+                  )}
+                </div>
+              
+          )};
+          
 
           <div style={{ marginTop: 16 }}>
-            {editing ? (
+            {editing && isCurrentUser ? (
               <div style={{ width: '100%', maxWidth: 300 }}>
                 <label style={{ display: 'block', marginBottom: 12 }}>
                   <div className="item-sub" style={{ textAlign: 'left' }}>Name</div>
@@ -152,7 +226,7 @@ export default function UserProfile() {
             ) : (
               <>
                 <div style={{ fontSize: 24, fontWeight: 600, marginBottom: 8 }}>
-                  {user.name || 'User'}
+                  {viewedUser.name || 'User'}
                 </div>
 
                 <div style={{ 
@@ -164,10 +238,10 @@ export default function UserProfile() {
                   justifyContent: 'center'
                 }}>
                   <Mail size={16} />
-                  {user.email}
+                  {viewedUser.email}
                 </div>
 
-                {user.phone && (
+                {viewedUser.phone && (
                   <div style={{ 
                     display: 'flex', 
                     alignItems: 'center', 
@@ -177,17 +251,20 @@ export default function UserProfile() {
                     justifyContent: 'center'
                   }}>
                     <Phone size={16} />
-                    {user.phone}
+                    {viewedUser.phone}
                   </div>
-                )}
+                  )}
+                  
+                  {isCurrentUser && (
+                    <button 
+                      className="btn btn-ghost"
+                      onClick={() => setEditing(true)}
+                      style={{ marginTop: 12 }}
+                    >
+                    Edit Profile
+                    </button>
+                  )}
 
-                <button 
-                  className="btn btn-ghost"
-                  onClick={() => setEditing(true)}
-                  style={{ marginTop: 12 }}
-                >
-                  Edit Profile
-                </button>
               </>
             )}
           </div>
@@ -198,6 +275,7 @@ export default function UserProfile() {
         Back to Dashboard
       </button>
 
+      {isCurrentUser && (
       <button 
         className="btn btn-ghost btn-full" 
         onClick={handleLogout}
@@ -205,7 +283,8 @@ export default function UserProfile() {
       >
         <LogOut size={18} />
         Sign Out
-      </button>
+        </button>
+        )}
     </div>
   );
 }
