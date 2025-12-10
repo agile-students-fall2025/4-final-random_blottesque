@@ -5,7 +5,7 @@ Roomier is a mobile web application designed to make shared living smoother, fai
 
 ## 🌐 Live Demo
 - **Frontend:** [https://roomier-panxo.ondigitalocean.app/login](https://roomier-panxo.ondigitalocean.app/)
-- **API:** [(https://roomier-panxo.ondigitalocean.app/final-random-blottesque-back-en2](https://roomier-panxo.ondigitalocean.app/final-random-blottesque-back-en2)
+- **API:** [https://roomier-panxo.ondigitalocean.app/final-random-blottesque-back-en2](https://roomier-panxo.ondigitalocean.app/final-random-blottesque-back-en2/api/health)
 
 > Hosted on Digital Ocean Droplet: `ubuntu-s-1vcpu-1gb-nyc3-01`
 
