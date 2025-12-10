@@ -4,7 +4,9 @@ import GroupForm from '../components/GroupForm';
 import { useApp } from '../context/AppContext';
 
 export default function CreateGroup() {
+
   const { createGroup, api, refreshGroups, setActiveGroupId } = useApp();
+
   const nav = useNavigate();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -49,9 +51,10 @@ export default function CreateGroup() {
         {joinMode ? 'Join a Group' : 'Create Group'}
       </h1>
       <p className="item-sub">
+
         {joinMode 
           ? 'Enter the invite code shared by your group.'
-          : 'Name your household, add roommates, pick components, and set quiet hours.'
+          : 'Name your household, pick components, and set quiet hours.'
         }
       </p>
 

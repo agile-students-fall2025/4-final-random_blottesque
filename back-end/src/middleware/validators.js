@@ -62,9 +62,8 @@ export const validateCreateGroup = [
     .withMessage('Roommates must be an array'),
   body('roommates.*')
     .optional()
-    .trim()
-    .isLength({ min: 1 })
-    .withMessage('Roommate entries cannot be empty'),
+    .isObject()
+    .withMessage('Roommate entries must be objects'),
   handleValidationErrors
 ];
 

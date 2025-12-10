@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import GroupForm from '../components/GroupForm';
 import ImageUpload from '../components/ImageUpload';
 import { useApp } from '../context/AppContext';
-import { Users, FileText, Home } from 'lucide-react';
+import { Users, FileText, Home, Trash2 } from 'lucide-react';
 import * as api from '../lib/api';
 
 export default function EditGroup() {
@@ -160,23 +160,24 @@ export default function EditGroup() {
       {/* Quick actions */}
       <div style={{ display: 'grid', gap: 12, marginBottom: 12 }}>
         <QuickTile
-          icon={<Users size={18} />}
-          title="Edit Members List"
-          subtitle="Use the roommates field in the form below"
+          icon={<FileText size={18} />}
+          title="Edit Description"
+          subtitle="Use the form below"
           onClick={() => {
-            const el = document.getElementById('roomates-input');
+            const el = document.getElementById('desc-input');
             if (el) {
               el.scrollIntoView({ behavior: 'smooth', block: 'center' });
               el.focus();
             }
           }}
         />
+
         <QuickTile
-          icon={<FileText size={18} />}
-          title="Edit Description"
-          subtitle="Use the form below"
+          icon={<Users size={18} />}
+          title="Edit Members List"
+          subtitle="Use the roommates field in the form below"
           onClick={() => {
-            const el = document.getElementById('desc-input');
+            const el = document.getElementById('roomates-input');
             if (el) {
               el.scrollIntoView({ behavior: 'smooth', block: 'center' });
               el.focus();
