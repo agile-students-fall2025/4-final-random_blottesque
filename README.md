@@ -4,7 +4,7 @@
 Roomier is a mobile web application designed to make shared living smoother, fairer, and less stressful by providing a centralized platform for roommates to coordinate chores, split expenses, track shared inventory, and maintain a harmonious living environment.
 
 ## 🌐 Live Demo
-- **Frontend:** [https://roomier-panxo.ondigitalocean.app/login](https://roomier-panxo.ondigitalocean.app/login)
+- **Frontend:** [https://roomier-panxo.ondigitalocean.app/login](https://roomier-panxo.ondigitalocean.app/)
 - **API:** [(https://roomier-panxo.ondigitalocean.app/final-random-blottesque-back-en2](https://roomier-panxo.ondigitalocean.app/final-random-blottesque-back-en2)
 
 > Hosted on Digital Ocean Droplet: `ubuntu-s-1vcpu-1gb-nyc3-01`
