@@ -14,8 +14,8 @@ const startServer = async () => {
     await connectDB();
     
     // Start HTTP server
-    createServer(app).listen(PORT, () => {
-      console.log(`Roomier API running at http://localhost:${PORT}`);
+    createServer(app).listen(PORT, '0.0.0.0', () => {
+      console.log(`Roomier API running at ${PORT}`);
       console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
     });
   } catch (error) {
